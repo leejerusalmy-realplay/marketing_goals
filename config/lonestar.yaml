@@ -1,0 +1,59 @@
+# LoneStar — knobs for marketing goals
+# Source: reference/Marketing_Goals_Combined_LoneStar.ipynb (inherited; not Excel-verified yet)
+
+project_id: oceanic-citadel-454608-d2
+brand: lonestar
+
+tables:
+  cost_per_user: analytics.lonestar_cost_per_user
+  deposits: lonestar.casino_astropay_dmn
+
+# as_of_date: set per run (predecessor used "today − 2 days")
+# as_of_date: "YYYY-MM-DD"
+
+populations_for_arpu_curves:
+  - Web
+  - Affiliate
+  # add App when LS App launches
+
+# affid → population (TikTok 4313 excluded entirely in queries)
+affid_map:
+  Web: [63, 4432, 4551, 4698, 5048, 5125, 7120, 7253, 7260, 8331, 8345]
+  # App: [1]  # uncomment when LS App launches
+  PPC: [64, 71]
+  Organic: [0, 78]
+  # else → Affiliate
+
+organic_label: Organic
+# No ORGANIC_SHARE_CAP_HORIZON in LS Combined predecessor
+organic_trim:
+  method: winsor
+  pct: 0
+
+trim:
+  Web:       { method: winsor, pct: 0 }
+  Affiliate: { method: winsor, pct: 0.01 }
+  Blended:   { method: winsor, pct: 0 }
+
+patches:
+  - [1, 7]
+  - [7, 14]
+  - [14, 30]
+  - [30, 60]
+  - [60, 90]
+  - [90, 120]
+  - [120, 150]
+  - [150, 180]
+  - [180, 270]
+  - [270, 365]
+
+goal_horizons: [7, 30, 60, 90, 120, 150, 180, 210, 240, 270, 365]
+checkpoints: [7, 30, 60, 90, 120, 150, 180, 210, 240, 270, 365]
+
+lookback_cohorts: 35
+cv_threshold: 0.175   # slightly higher than RP in predecessor
+cv_good_enough: 0.10
+max_remove_fraction: 0.15
+
+# Predecessor LS curve builder uses a two-pass persistent trim
+curve_builder: two_pass

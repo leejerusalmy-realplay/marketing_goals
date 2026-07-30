@@ -1,0 +1,14 @@
+# Local / OS
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Secrets — never commit
+*.json
+!package.json
+.env
+credentials*
+
+# Large local Excel dumps (optional; keep runs/ CSVs if small)
+# *.xlsx

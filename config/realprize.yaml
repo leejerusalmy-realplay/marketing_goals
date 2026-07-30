@@ -1,0 +1,58 @@
+# RealPrize — knobs for marketing goals
+# Source: reference/Marketing_Goals_Combined_RealPrize.ipynb (inherited; not Excel-verified yet)
+
+project_id: oceanic-citadel-454608-d2
+brand: realprize
+
+tables:
+  cost_per_user: analytics.realprize_cost_per_user
+  deposits: realprize.casino_astropay_dmn
+
+# as_of_date: set per run (predecessor used "today − 2 days")
+# as_of_date: "YYYY-MM-DD"
+
+populations_for_arpu_curves:
+  - Web
+  - App
+  - Affiliate
+
+# affid → population (TikTok 4313 excluded entirely in queries)
+affid_map:
+  Web: [63, 2521, 2535, 4957, 4971, 5048, 5062, 5069]
+  App: [1]
+  PPC: [64, 71]
+  Organic: [0, 78, 2290]
+  # else → Affiliate
+
+# App organic vs acquired uses channel_type = 'app_organic' on affid 1
+organic_label: Organic
+organic_share_cap_horizon: 120
+organic_trim:
+  method: winsor   # winsor | cohort_trim
+  pct: 0
+
+trim:
+  App:       { method: winsor, pct: 0 }
+  Web:       { method: winsor, pct: 0.01 }
+  Affiliate: { method: winsor, pct: 0.01 }
+  Blended:   { method: winsor, pct: 0 }
+
+patches:
+  - [1, 7]
+  - [7, 14]
+  - [14, 30]
+  - [30, 60]
+  - [60, 90]
+  - [90, 120]
+  - [120, 150]
+  - [150, 180]
+  - [180, 270]
+  - [270, 365]
+
+goal_horizons: [7, 30, 60, 90, 120, 150, 180, 210, 240, 270, 365]
+checkpoints: [7, 30, 60, 90, 120, 150, 180, 210, 240, 270, 365]
+
+lookback_cohorts: 35
+cv_threshold: 0.15
+cv_good_enough: 0.10
+max_remove_fraction: 0.15
