@@ -2,6 +2,17 @@
 
 Status: **draft from reference code** — not yet Excel-verified step by step.
 
+## Time & cost discipline
+
+Important for every query and script in this project: **save time and money** while still being correct and Excel-checkable.
+
+- Prefer **small, step-sized SQL** for learning checks — not full-history mega-pulls into pandas.
+- Use a **tight date window** and/or **LIMIT / sample** when verifying logic in Excel; widen only when the step is proven.
+- Avoid re-scanning the same huge tables repeatedly; reuse cached extracts or write intermediate results once when useful.
+- Don’t pull columns or populations you don’t need for the current step.
+- Heavy Colab loops over all users × many trim variants (e.g. Blended TrimComparison) are expensive in **runtime**; treat them as occasional calibration, not daily exploration.
+- When suggesting SQL/scripts, call out if a query is likely **expensive** (bytes scanned / long runtime) and offer a cheaper check variant first.
+
 ## What the deliverable is
 
 For each population and goal horizon (7, 30, 60, …, 365 days), a day-by-day **goal ratio**: what share of horizon ARPU should deposits have reached by day *d*.
@@ -49,9 +60,11 @@ See `config/realprize.yaml` and `config/lonestar.yaml`.
 
 ## Open items to verify in Excel
 
-- [ ] Population assignment counts vs affid lists
-- [ ] First cost_date definition
-- [ ] Cumulative revenue / dsi
+- [x] Population assignment counts vs affid lists *(Step 01)*
+- [x] First cost_date definition / always cost_date not dateReg *(Step 01–02)*
+- [x] Cumulative revenue / dsi *(Step 02)*
+- [x] Cohort ARPU + day-D uses dsi ≤ D−1 *(Step 03)*
+- [ ] Patch growth ratio ARPU_e / ARPU_s *(Step 04)*
 - [ ] Winsor vs cohort_trim math
 - [ ] Persistent trim carry-forward
 - [ ] CV date removal

@@ -25,4 +25,6 @@ Build day-by-day deposit ARPU goals by acquisition population (Web / App / Affil
 
 ## Current phase
 
-**Scaffold + learning.** Production numbers still come from understanding `reference/` Combined notebooks — not from a new pipeline yet.
+**Scaffold + learning.** Full pipeline explained (see `playbook/HANDOFF.md` + `LS_PIPELINE_FLOW.md`). Production numbers still come from understanding `reference/` Combined notebooks — not from a rebuilt pipeline yet.
+
+**New chat?** Start the agent on `playbook/HANDOFF.md`.

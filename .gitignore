@@ -12,3 +12,6 @@ credentials*
 
 # Large local Excel dumps (optional; keep runs/ CSVs if small)
 # *.xlsx
+
+# Google Drive Doc stubs (real Doc lives in Drive)
+*.gdoc
