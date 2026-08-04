@@ -61,16 +61,49 @@ LS → population → cum/DSI → ARPU per patch → winsor → growth → CV �
 | dsi / cum / day indexing | SQL exists; largely understood |
 | Patch growth, winsor, CV, stitch, organic | Explained; SQL through step **06** organic (RP-style); not all Excel-locked yet |
 | Goal ratio (raw × organic → adjusted) | SQL step **07** ready (toy curve, free); Excel-lock pending |
+| Curve tail / `is_extrapolated` | Documented in LS_PIPELINE_FLOW Box 11 + Google Doc |
+
+---
+
+## Tomorrow: rebuild unified goals script (kickoff)
+
+**Goal:** one end-to-end script → **one goals table** for **RP + LS**, **Blended + Web + Affiliate** (+ App on RP when live).
+
+### Locked output schema (main deliverable)
+
+| Column | Notes |
+|--------|--------|
+| `brand` | `realprize` / `lonestar` |
+| `population` | Web, Affiliate, App (RP), Blended |
+| `goal_horizon` | 7…365 as in config |
+| `day` | 1 … goal_horizon (life day; **not** rename to dsi) |
+| `raw_goal_ratio` | ARPU(day) / ARPU(horizon) |
+| `organic_share` | endpoint share; 0 for Blended |
+| `adjusted_goal_ratio` | raw × (1 − organic); Blended = raw |
+
+Optional later/detail: ARPU_$ columns, `is_extrapolated`, `effective_patch`, `as_of_date`, `run_id`. Side files OK: curve, organic, cv_summary (each with `brand`).
+
+### Implementation plan (when coding starts)
+
+1. Scaffold under `src/` (+ Colab/notebook entry if she prefers) using `config/realprize.yaml` + `config/lonestar.yaml`.
+2. Port Combined logic brand-by-brand: population → curve → organic → goals; then stack brands.
+3. Parity checks vs `reference/Marketing_Goals_Combined_*.ipynb` on a few cells before trusting production numbers.
+4. Write dated outputs under `runs/`.
+
+### Still open before first production numbers (not blockers to start coding)
+
+- Excel-lock step 07 if she wants the formula frozen in DECISIONS.
+- Exact engine (local script vs Colab-first).
+- Whether detail columns ship in v1 or main-only.
 
 ---
 
 ## Sensible next steps (when Lee is ready)
 
-1. **Now:** run / Excel-check step **07** goal ratio (`playbook/sql_steps/07_goal_ratio_from_curve_toy.sql`).
-2. Optional next SQLs: CV date removal, day-step weights, curve stitch (if she wants those locked before rebuild).
-3. Optional: LS twin of step SQLs / `RP_PIPELINE_FLOW.md`.
-4. Commit/push playbook updates if she says “save a version”.
-5. Only later: rebuild Combined into `src/` + `notebooks/` + dated `runs/`.
+1. **Tomorrow primary:** start unified goals script (see above).
+2. Optional: Excel-check step **07** (`playbook/sql_steps/07_goal_ratio_from_curve_toy.sql`).
+3. Optional: more locking SQLs (CV, day-steps) in parallel with rebuild if needed.
+4. Commit/push when she says “save a version”.
 
 ---
 
