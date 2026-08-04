@@ -6,7 +6,7 @@
 https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit
 
 Status: documented from Combined predecessor + learning Q&A.  
-Chart path: LS → population → cum/DSI → ARPU per patch → winsor → growth → CV → weighted day growth → ARPU D1 → curve → (+ organic share) → adjust? → adjusted goal.
+Chart path: LS → population → cum/DSI → ARPU per patch → winsor → growth → CV → weighted day growth → ARPU D1 → curve → (+ organic share) → adjust with organic? → Need extrapolation? (Yes/No) → adjusted goal.
 
 This file is the long-form version of every box on that chart.
 
@@ -447,6 +447,85 @@ The **model curve** after averaging many dates and stitching patches —
 - Goals later **slice** that curve at many horizons (7, 30, …, 365).
 - So: full-year engine; multiple goal lengths on top — not a single monthly product.
 
+### Curve tail extrapolation (`is_extrapolated`)
+
+**Where it lives:** after the stitched ARPU curve (fill-forward of late life $ days).  
+**On your chart:** after “adjust with organic?” → decision **Need extrapolation?** Yes/No → adjusted goal.  
+
+Code vs chart: Combined extends the **ARPU curve** when the last measured day is before 365; goals then only **divide** those ARPUs. Organic haircut is separate. The chart box is the “do late days need fill?” gate; it is not a second goal formula.  
+Goals never compute a special “True” formula.
+
+**Why it exists:**  
+Long horizons (e.g. 365) need ARPU at late life days. Patches only measure days that **mature cohorts already reached**. If the stitched curve’s last real day is **before** 365, Combined (LS) can **extend** the curve forward. Those filled days are marked `is_extrapolated = True`.
+
+**Not “no history at all.”**  
+Extension uses the **last ~30 measured days already on the curve**. Without at least 2 real days, there is nothing to extend from and the function returns the curve unchanged.
+
+#### What `is_extrapolated` means when you read a row
+
+| Value | Meaning |
+|-------|---------|
+| **False** | ARPU for that life day came from measured patch growth (history). |
+| **True** | ARPU for that life day was **filled forward** with a constant daily growth rate — not observed at that day. |
+
+#### Formula (LS Combined — `extrapolate_curve_tail`)
+
+Defaults in predecessor: `up_to_day=365`, `tail_days=30`.
+
+1. Let `last_real_day` = max day on the **non-extrapolated** curve.  
+   If already ≥ 365 → do nothing.
+2. Take the last `tail_days` real rows:  
+   `ARPU_nominal` for days near the end of the measured curve.
+3. Day-to-day growth ratios on that tail:  
+   `ratio_d = ARPU(d) / ARPU(d−1)` (keep finite, &gt; 0).
+4. One constant daily rate = **geometric mean** of those ratios:  
+   `r = exp(mean(log(ratios)))`  
+   (= average multiplicative step, not arithmetic mean of the ratios).
+5. Walk forward:  
+   `ARPU(last_real_day + 1) = ARPU(last_real_day) × r`  
+   `ARPU(last_real_day + 2) = that result × r`  
+   … up to day 365.  
+   Each new row: `is_extrapolated = True`, `growth_step = r`.
+
+#### Tiny example
+
+Measured curve ends at day 100 with ARPU = **$10**.  
+Last ratios in the tail average (geometrically) to **r = 1.01** (+1%/day).
+
+| day | ARPU | is_extrapolated |
+|-----|------|-----------------|
+| 100 | 10.00 | False |
+| 101 | 10.00 × 1.01 = 10.10 | **True** |
+| 102 | 10.10 × 1.01 = 10.201 | **True** |
+| … | × 1.01 each day | **True** |
+
+#### Goals when a curve day is extrapolated
+
+Same formulas as always:
+
+```text
+raw_goal_ratio      = ARPU(day) / ARPU(goal_horizon)
+adjusted_goal_ratio = raw_goal_ratio × (1 − organic_share)
+```
+
+`is_extrapolated` is an **audit flag** copied onto the goal row (when present).  
+It does **not** change the goal algebra — only whether the ARPU inputs were measured or filled.
+
+If **day** and/or **goal_horizon** fall on True days, that goal ratio inherits that weaker late-life assumption.
+
+#### LS vs RP (predecessor Combined)
+
+| Brand | Tail fill in Combined |
+|-------|------------------------|
+| **LoneStar** | `extrapolate_curve_tail` present — filled days get `is_extrapolated = True`. |
+| **RealPrize** | Column often exists and is set **False** for stitched days; full tail-fill not the same production path as LS. Treat RP as “flag reserved / usually False unless we enable the same helper.” |
+
+#### Q&A locked in
+
+- Goals box ≠ prediction box. Prediction (fill-forward) = **curve stage only**.
+- Early goals (7, 14, 30…) are almost always on **False** days if patches cover them.
+- Year-1 **horizon** may use a **True** denominator if late life was filled — check the flag on day 365 / late days when reading long goals.
+
 ---
 
 ## Box 12 — Organic share (side branch from population)
@@ -537,6 +616,9 @@ adjusted_goal_ratio = raw_goal_ratio
 # organic_share stored as 0
 ```
 
+No separate formula when `is_extrapolated` is True — goals only divide curve ARPU points  
+(see **Box 11 → Curve tail extrapolation**).
+
 ### Grain of the output
 
 One row per:
@@ -596,10 +678,15 @@ for each patch s→e:               │
 ARPU_1 pooled from first patch    │
     ↓                             │
 multiply day-steps → Curve        │
+    ↓ (optional LS)               │
+extend tail if last day < 365     │
+  is_extrapolated = True on fill  │
                                   │
 organic share (from population)  ←┘
     ↓
 adjust? (Web/Aff yes, Blended 0)
+    ↓
+Need extrapolation? (chart Yes/No — fill already on curve if needed)
     ↓
 adjusted goals (many horizons × every day)
 ```
@@ -612,6 +699,7 @@ adjusted goals (many horizons × every day)
 2. **Growth box:** patch growth feeds CV; **per-day** weighted steps feed the curve.
 3. **Organic “non_app” on LS today:** Combined uses **`scope=all`** until App/scope columns exist; your chart is the right *target design* for App launch / RP parity.
 4. **Goals are not only monthly:** curve to 365; horizons include 7, 30, 60, …, 365; each horizon is day-by-day.
+5. **`is_extrapolated` / chart “Need extrapolation?”:** Yes = late life days on the ARPU curve were filled forward (geom. mean of last ~30 daily steps); those days = True. Goals still only divide ARPU points — see Box 11.
 
 ---
 

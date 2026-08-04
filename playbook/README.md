@@ -6,6 +6,8 @@ How to understand and (later) re-run marketing goals.
 
 | File | What |
 |------|------|
+| `HANDOFF.md` | **Start here** in a new chat — status, next steps, locked understanding |
+| `LS_PIPELINE_FLOW.md` | Full LS chart pipeline + Q&A (includes curve tail / `is_extrapolated`) |
 | `METHODOLOGY.md` | What we calculate and why (formula, data sources, trim, organic, goals) |
 | `DECISIONS.md` | Dated locks (trim %, organic cap, etc.) as we decide them |
 | `sql_steps/` | One SQL per calculation for BigQuery → Excel checks |

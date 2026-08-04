@@ -18,5 +18,8 @@ One file per calculation. Naming: `NN_short_name.sql`.
 | 05 | `05_winsor_trim_day7_user_level_rp.sql` | Winsor 1%: who gets capped (App demo cohort) |
 | 05b | `05b_trim_methods_compare_summary_rp.sql` | no_trim vs winsor vs cohort_trim ARPU |
 | 06 | `06_organic_share_non_app_h30_rp.sql` | Organic share at horizon 30 (non_app endpoint) |
+| 07 | `07_goal_ratio_from_curve_toy.sql` | raw / adjusted goals from toy curve × organic (free; no tables) |
 
 Each file: runnable alone in BigQuery → export to Excel → verify before next step.
+
+**Step 07 note:** uses `UNNEST` VALUES only (no cost table scans). Same formulas as Combined; numbers align with `playbook/examples/SAMPLE_realprize_combined_*.csv`.

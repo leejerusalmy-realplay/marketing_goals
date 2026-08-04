@@ -55,8 +55,9 @@ See `config/realprize.yaml` and `config/lonestar.yaml`.
 4. Apply **trim** (winsor or cohort_trim); **persistent** = once excluded, stay excluded later.
 5. Adaptive **CV** cleanup: drop outlier cohort dates until growth CV is stable enough.
 6. Stitch patches into a full-day ARPU curve.
+   - Optional (LS): if last real day &lt; 365, **extend** with geometric mean of last ~30 daily growth steps → those days `is_extrapolated = True`. Details: `LS_PIPELINE_FLOW.md` Box 11.
 7. Compute **organic share** by scope × horizon.
-8. Build **goals** from curve + organic share.
+8. Build **goals** from curve + organic share (ratios only; extrapolation flag is audit-only).
 
 ## Open items to verify in Excel
 
@@ -69,6 +70,6 @@ See `config/realprize.yaml` and `config/lonestar.yaml`.
 - [ ] Persistent trim carry-forward
 - [ ] CV date removal
 - [ ] Organic share (RP app vs non_app; share cap at day 120)
-- [ ] Final goal ratio
+- [ ] Final goal ratio *(Step 07 SQL ready — Excel lock pending)*
 
 SQL for each checkbox will live under `playbook/sql_steps/` as we go.
