@@ -2,7 +2,15 @@
 
 Dated locks for this project. Newest first.
 
-*(None locked from Excel verification yet. Values below are inherited from predecessor Combined notebooks and live in `config/` until confirmed.)*
+*(None locked from Excel verification yet for the full pipeline. Values below include build choices from Lee + inherited Combined knobs in `config/`.)*
+
+## 2026-08-04 — Rebuild v1: Colab + Combined structure
+
+- **Engine:** Google **Colab** notebook (v1 entrypoint), not local CLI-only.
+- **Code shape:** start from existing Combined structure (`reference/Marketing_Goals_Combined_*.ipynb`) — same pipeline sections/exports spirit — then unify **RP + LS** into **one run / one goals table**.
+- **Main goals columns (locked):** `brand`, `population`, `goal_horizon`, `day`, `raw_goal_ratio`, `organic_share`, `adjusted_goal_ratio`. Keep `day` (not dsi).
+- **Step 07 Excel:** not done yet; not a blocker to start coding.
+- **Where:** `notebooks/` + dated `runs/`; config already in `config/*.yaml`.
 
 ## 2026-07-30 — Step 01 locked: population assignment (RP)
 
