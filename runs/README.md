@@ -1,16 +1,38 @@
 # runs/
 
-Dated outputs from a specific run. **Never overwrite** — new date = new folder.
+Dated output of a goals run. **Never overwrite** — each export creates a new folder.
 
-Example:
+## Folder naming
 
-```
-runs/2026_08_15_realprize/
-  config_snapshot.yaml
-  cv_summary.csv
-  arpu_curve.csv
-  organic_share.csv
-  goals_adjusted.csv
+```text
+runs/<as_of_date>_<brand_slug>_<run_ts>/
 ```
 
-Empty until the first verified run.
+| Piece | Meaning | Example |
+|-------|---------|---------|
+| `as_of_date` | Cohort anchor from notebook (usually today − 2) | `2026-08-05` |
+| `brand_slug` | Brands in this run: `rp`, `ls`, or `rp_ls` | `rp` |
+| `run_ts` | Clock time of **export** (`HHMMSS`) so same-day re-runs stay separate | `143022` |
+
+Examples:
+- First RP-only export today: `2026-08-05_rp_140512/`
+- Second RP-only later today: `2026-08-05_rp_162230/`
+- Full RP+LS: `2026-08-05_rp_ls_162245/`
+
+Downloaded Colab CSVs use the same tag in the filename, e.g.
+`combined_goals_2026-08-05_rp_140512.csv`.
+
+## Files inside a run folder
+
+| File | Role |
+|------|------|
+| `combined_goals.csv` | Main locked columns |
+| `combined_goals_detail.csv` | + ARPU / patch flags |
+| `combined_arpu_curve.csv` | Curves |
+| `combined_organic_share.csv` | Organic |
+| `combined_cv_summary.csv` | CV |
+| `run_meta.csv` | as_of, brands, run_ts, exported_at |
+
+## Which folder is "latest"?
+
+Sort by folder name or by `run_meta.exported_at`. Say **"check the latest run"** in chat and the agent will pick the newest under `runs/`.

@@ -19,7 +19,12 @@ One file per calculation. Naming: `NN_short_name.sql`.
 | 05b | `05b_trim_methods_compare_summary_rp.sql` | no_trim vs winsor vs cohort_trim ARPU |
 | 06 | `06_organic_share_non_app_h30_rp.sql` | Organic share at horizon 30 (non_app endpoint) |
 | 07 | `07_goal_ratio_from_curve_toy.sql` | raw / adjusted goals from toy curve × organic (free; no tables) |
+| 08 | `08_*` + `08_python_parity_README.md` | **Python parity full patch 1→7:** RP Web, cost_date `2026-06-23` (ARPU each day + day-steps + winsor) |
 
 Each file: runnable alone in BigQuery → export to Excel → verify before next step.
 
+**Step 05 / 05b note:** winsor **keeps** users (cap $ only); cohort_trim **removes** top depositors. Production Combined uses winsor only — see `../TRIM_BY_POPULATION.md`.
+
 **Step 07 note:** uses `UNNEST` VALUES only (no cost table scans). Same formulas as Combined; numbers align with `playbook/examples/SAMPLE_realprize_combined_*.csv`.
+
+**Config / knobs (as_of, min_cohort_dates, scope):** `../CONFIG_AND_KNOBS.md`.

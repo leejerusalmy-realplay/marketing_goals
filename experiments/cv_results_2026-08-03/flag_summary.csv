@@ -1,0 +1,8 @@
+experiment,n_flagged,n_patches,remaining
+baseline,9,70,lo/Blended/1->7=0.238; lo/Web/1->7=0.316; lo/Web/180->270=0.194; re/App/1->7=0.223; re/Blended/1->7=0.192; re/Web/1->7=0.245; re/Web/14->30=0.221; re/Web/30->60=0.202; re/Web/7->14=0.151
+A_early_max25,6,70,lo/Blended/1->7=0.208; lo/Web/1->7=0.293; lo/Web/180->270=0.194; re/Blended/1->7=0.159; re/Web/1->7=0.213; re/Web/30->60=0.199
+A_early_max30,6,70,lo/Blended/1->7=0.192; lo/Web/1->7=0.222; lo/Web/180->270=0.194; re/Blended/1->7=0.150; re/Web/1->7=0.199; re/Web/30->60=0.198
+B_greedy_cv,6,70,lo/Blended/1->7=0.233; lo/Web/1->7=0.281; re/App/1->7=0.213; re/Blended/1->7=0.176; re/Web/1->7=0.227; re/Web/30->60=0.182
+A25+B,4,70,lo/Blended/1->7=0.206; lo/Web/1->7=0.229; re/Web/1->7=0.198; re/Web/30->60=0.157
+C_wdev_early25,9,70,lo/Blended/1->7=0.219; lo/Web/1->7=0.275; lo/Web/180->270=0.371; re/App/60->90=0.152; re/Blended/1->7=0.157; re/Web/1->7=0.233; re/Web/14->30=0.229; re/Web/30->60=0.412; re/Web/60->90=0.184
+D_global_max25,6,70,lo/Blended/1->7=0.208; lo/Web/1->7=0.293; lo/Web/180->270=0.191; re/Blended/1->7=0.159; re/Web/1->7=0.213; re/Web/30->60=0.199

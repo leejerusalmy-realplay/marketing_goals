@@ -15,3 +15,10 @@ credentials*
 
 # Google Drive Doc stubs (real Doc lives in Drive)
 *.gdoc
+
+# Experiment BQ caches (local only)
+experiments/cache/
+*.parquet
+
+# Google Sheets Drive stubs
+*.gsheet

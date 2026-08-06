@@ -2,13 +2,18 @@
 
 # LoneStar marketing goals — detailed pipeline (matches your flow chart)
 
-**Readable Google Doc (same content):**  
+**Readable Google Doc (plain-language rewrite + examples):**  
 https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit
 
 Status: documented from Combined predecessor + learning Q&A.  
 Chart path: LS → population → cum/DSI → ARPU per patch → winsor → growth → CV → weighted day growth → ARPU D1 → curve → (+ organic share) → adjust with organic? → Need extrapolation? (Yes/No) → adjusted goal.
 
-This file is the long-form version of every box on that chart.
+This file is the long-form / technical twin. Prefer the Google Doc for natural-language reading with small numeric examples.
+
+### Quick answers
+
+1. **Winsor only for ARPU_e?** No. Cap is **set** from depositors’ cum at patch end **e**, then **applied** when summing cums at **both** s and e (and day-steps). Users stay in N.
+2. **CV growth = only ARPU_e / ARPU_s?** Yes. CV ranks/removes **cost_dates** using patch growth `ARPU_e/ARPU_s` only — not day-to-day steps (those come after, on kept dates).
 
 ---
 
@@ -29,9 +34,13 @@ This file is the long-form version of every box on that chart.
 | Max dates removable | **15%** of cost_dates in the patch | `floor(n × 0.15)`, at least 1 |
 | Organic trim | winsor **0%** (off) | |
 | Organic share cap @ 120 | **None on LS** | RP pins long horizons to day-120 share; LS does not |
+| **min_cohort_dates** | **20** | After CV, if fewer than 20 cost_dates left for the patch → **skip patch**. RP uses **1**. |
+| User scope/bucket columns | **No** | Organic helpers default `scope=all`. RP has app/non_app. |
 
 Excluded affids on LS: **4866, 7127** (TikTok / TikTok Canada).  
 (`id > 0` always.)
+
+Full knob side-by-side (RP vs LS): `CONFIG_AND_KNOBS.md`.
 
 ---
 
@@ -62,15 +71,25 @@ Same *machinery* as RealPrize; different affid lists, trim %, CV flag line, no A
 | **App** | 1 (commented out) | Not live | — |
 | **Blended** | all of the above together | Yes (separate curve) | Yes, **no** organic haircut |
 
-### Scope / bucket (organic later)
+### Scope / bucket (organic later) — plain language
+
+“User structure” here means **what columns the users SQL returns**, not casino DB tables.
 
 **LS Combined today** does **not** pull `scope` / `bucket` columns. Organic share falls back to:
 
 - `scope = 'all'`
 - `bucket = organic` if population == Organic, else `acquired`
 
-Your chart’s **app / non_app** split is the **RP design** (and the future LS design once App is live). Until then, Web and Affiliate both use the same LS organic number (`scope=all`).
+So Web goals and Affiliate goals on LS currently share one organic-share series.
 
+**RealPrize** pulls both columns in SQL:
+
+- `scope`: `app` (affid=1) vs `non_app`
+- `bucket`: organic vs acquired (App organic = affid=1 **and** channel_type app_organic)
+
+Your chart’s **app / non_app** split is the **RP design** (and future LS once App is live). Until then LS Combined = `scope=all`.
+
+Full map: `CONFIG_AND_KNOBS.md` § User structure.
 When App is live (RP-style):
 
 | Scope | Populations that use it for the haircut |
@@ -196,8 +215,17 @@ You *could* estimate every single day without patches, but then every day would 
 
 1. At patch **end day e**, look at users with cum_e > 0 (**depositors only** for the percentile).
 2. Cap = quantile at `(1 − pct)` → for 1%, ~**p99**.
-3. For every user, replace cum $ with `min(cum, cap)` when summing for ARPU (at s and at e for that patch).
+3. For every user, replace cum $ with `min(cum, cap)` when summing for ARPU (at s and at e **and** day-steps for that patch).
 4. **Users are not removed** from N_users.
+
+**Where in code (Combined helpers):**
+
+- Config chooses method: `BRAND_CONFIGS[…]['trim_config']` → global `TRIM_CONFIG`
+- Router: `get_trimmed_cohort_and_caps` → winsor branch builds caps; user list unchanged
+- Dollars leave the calc only in `sum_cum_at_idx`: `cum = min(cum, cap_e)`
+- Cohort_trim would shrink `trimmed_users` and set `newly_excluded`; production path does not
+
+Detail: `TRIM_BY_POPULATION.md`, `CONFIG_AND_KNOBS.md`.
 
 ### Winsor vs cohort_trim (for memory)
 
@@ -313,6 +341,22 @@ Growths: 2.13, 1.50, 1.50, **15.0**, 1.50
 
 Unweighted mean ≈ 4.33 → date with 15 is farthest → removed first → CV of the rest drops → stop.  
 Weighted mean of kept ≈ uses `sum_cum_s` weights (next box / diagnostics).
+
+### If we hit the 5-date limit — then what?
+
+Plain-language flow (also in the Google Doc twin):
+
+1. Compute `cv_before` (weighted σ/μ of patch growth).
+2. If CV already **≤ 0.10** → remove nobody.
+3. If CV **> 0.10** → drop worst cost_dates one by one (max **~5** of 35).
+4. Stop at **≤ 0.10** or **hit the 5-date cap**.
+5. **Always keep the patch** and build curve/goals from remaining dates.
+6. Only then: if `cv_after` **> brand flag** (LS **0.175**, RP **0.15**) → `flagged=True` (warning only).
+
+**Do not remove / skip the life patch** just because it is flagged.  
+High `cv_after` after max drops = still noisy after allowed cleanup, not “delete 14→30.”
+
+How to read `combined_cv_summary`: `cv_before` / `cv_after` / `flagged` / kept vs removed cost_dates.
 
 ---
 

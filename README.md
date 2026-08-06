@@ -25,6 +25,6 @@ Build day-by-day deposit ARPU goals by acquisition population (Web / App / Affil
 
 ## Current phase
 
-**Scaffold + learning.** Full pipeline explained (see `playbook/HANDOFF.md` + `LS_PIPELINE_FLOW.md`). Production numbers still come from understanding `reference/` Combined notebooks — not from a rebuilt pipeline yet.
+**Rebuild started.** Unified Colab: `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` (RP + LS → one goals table). Numbers still need parity check vs frozen `reference/` Combined notebooks before production use.
 
 **New chat?** Start the agent on `playbook/HANDOFF.md`.

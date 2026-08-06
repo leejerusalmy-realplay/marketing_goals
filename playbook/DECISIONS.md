@@ -4,6 +4,29 @@ Dated locks for this project. Newest first.
 
 *(None locked from Excel verification yet for the full pipeline. Values below include build choices from Lee + inherited Combined knobs in `config/`.)*
 
+## 2026-08-06 — Config & trim nuances documented (walkthrough)
+
+Read-through of Combined Colab **config cell** + **trim helpers** locked into playbook:
+
+- **`playbook/CONFIG_AND_KNOBS.md`** — full knob map, seed globals, scope/bucket, min_cohort_dates, where method is chosen/applied.
+- **`playbook/TRIM_BY_POPULATION.md`** — expanded with “do we trim users?”, code paths, cap nuances.
+- **Google Doc** appended with plain-language twin of the same materials.
+
+Inherited production facts re-confirmed (not newly re-decided):
+
+| Fact | Value |
+|------|--------|
+| ARPU trim method in Combined | **winsor only** (all pops) |
+| cohort_trim in production | **No** (labs only) |
+| Winsor **drops users?** | **No** — only `min(cum, cap)`; N unchanged |
+| Caps computed at | Patch **end day e**, depositors-only quantile |
+| Caps applied to | Day s, day e, and day-steps inside the patch |
+| RP `min_cohort_dates` | **1** |
+| LS `min_cohort_dates` | **20** |
+| RP user shape | scope app/non_app + bucket |
+| LS user shape | no scope/bucket columns → organic **scope=all** |
+| Config lives in | Notebook `BRAND_CONFIGS` (+ mirrored `config/*.yaml`, not runtime-loaded) |
+
 ## 2026-08-04 — Rebuild v1: Colab + Combined structure
 
 - **Engine:** Google **Colab** notebook (v1 entrypoint), not local CLI-only.
