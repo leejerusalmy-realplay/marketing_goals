@@ -1,8 +1,14 @@
-# Decisions (marketing goals)
+# Decisions (marketing goals) — RP + LS
 
-Dated locks for this project. Newest first.
+Dated locks for this project. Newest first. Every lock notes which brand(s) it applies to.
 
-*(None locked from Excel verification yet for the full pipeline. Values below include build choices from Lee + inherited Combined knobs in `config/`.)*
+*(Full pipeline Excel-lock still partial. Knobs mirror `config/realprize.yaml` + `config/lonestar.yaml` + notebook `BRAND_CONFIGS`.)*
+
+## 2026-08-06 — Every playbook file dual-brand (RP + LS)
+
+- Playbook docs rewrite: each file states **shared machinery** and **brand config differences**.
+- Master knob side-by-side: `CONFIG_AND_KNOBS.md` / `METHODOLOGY.md`.
+- Pipeline file: `PIPELINE_FLOW.md` (renamed from LS-only name).
 
 ## 2026-08-06 — Config & trim nuances documented (walkthrough)
 

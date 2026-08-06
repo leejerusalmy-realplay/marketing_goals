@@ -1,8 +1,10 @@
-# Working with the agent on marketing goals notebooks
-
 *Lee Jerusalmy*
 
+# Working with the agent — notebooks (RP + LS)
+
 How Cursor and Lee share one notebook loop (code → run → outputs → edits → git).
+
+**Brands:** the Combined notebook runs **both** RealPrize and LoneStar (`RUN_BRANDS`). Each brand uses its own `BRAND_CONFIGS` knobs (winsor, CV flag, min_cohort_dates, scope…). See `CONFIG_AND_KNOBS.md`.
 
 ---
 
@@ -10,88 +12,55 @@ How Cursor and Lee share one notebook loop (code → run → outputs → edits �
 
 | Thing | Connected to agent? | How |
 |--------|---------------------|-----|
-| Notebook **source** (cells / code) in `notebooks/*.ipynb` | **Yes** | On Google Drive under `lee_project/` — agent can read & edit |
-| **CSV outputs** under `runs/` | **Yes** after a run saves them | Agent reads CSVs, compares, diffs |
-| **Cell outputs** inside the `.ipynb` | **Yes only if saved into the file** | Run in Cursor **or** Colab → **File → Save** so Drive syncs |
-| Live Colab runtime (RAM, mid-run state) | **No** | Agent is not inside Colab’s session |
-
-So: full integration = **file on Drive + `runs/` + git**, not a live remote desktop into Colab.
+| Notebook **source** in `notebooks/*.ipynb` | **Yes** | Drive under `lee_project/` |
+| **CSV outputs** under `runs/` | **Yes** after export | Goals include `brand` = realprize / lonestar |
+| **Cell outputs** in the `.ipynb` | Only if saved | Save so Drive syncs |
+| Live Colab RAM | **No** | You run; agent reads files |
 
 ---
 
-## One source of truth (pick this)
+## One source of truth
 
 | Role | File |
 |------|------|
-| Edit in Cursor / agent | Either twin (keep them in sync when we change logic) |
-| Run in Colab | `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` |
-| Run in Cursor | `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` |
-| Numbers to review | `runs/<as_of_date>_rp_ls/*.csv` |
+| Edit with agent | Either twin (mirror logic in both) |
+| Run Colab | `Marketing_Goals_Combined_RP_LS_Colab.ipynb` |
+| Run Cursor | `Marketing_Goals_Combined_RP_LS.ipynb` |
+| Numbers | `runs/<as_of>_*` CSVs — filter by `brand` |
 
-When the agent changes pipeline logic, ask to **mirror both notebooks** (or say “Colab only”).
-
----
-
-## Loop that works with the agent
-
-1. **You run** (Colab or Cursor) end-to-end with `MONITOR_STEPS = True`.
-2. **You save outputs**
-   - Prefer export into `marketing_goals/runs/<date>_rp_ls/` (Drive mount in Colab, or automatic path locally).
-   - Optional: **Save** the notebook so printed cell outputs land in the `.ipynb`.
-3. **You say in chat** e.g.  
-   - “look at the latest run”  
-   - “Part 3 organic share looks wrong on RP Web D120”  
-   - “change CV threshold…”  
-4. **Agent** opens `runs/` (+ notebook if outputs saved), proposes/edits code, updates playbook if needed.
-5. **You re-run** only what changed (or full refresh).
-6. **You say “save a version”** → agent commits + pushes `marketing_goals` git (when you ask).
+Set `RUN_BRANDS = ['realprize']` or `['lonestar']` for a single-brand debug run.
 
 ---
 
-## So the agent can *see* a run
+## Loop
 
-Minimum (best for cost/clarity): CSVs in `runs/`  
-Optional: saved notebook with execution outputs under each cell  
+1. You run end-to-end (`MONITOR_STEPS = True`). Both brands unless you narrowed `RUN_BRANDS`.
+2. Export CSVs into `marketing_goals/runs/…`.
+3. In chat: e.g. “RP Web D120 organic looks wrong” or “LS Aff winsor…”
+4. Agent reads `runs/` (+ notebook if saved), edits code, updates playbook.
+5. You re-run; “save a version” → commit when asked.
 
-Not enough alone: screenshots, or a Colab tab that never saved.
+Brand-specific bugs almost always mean knobs: `apply_brand_globals`, trim_config, CV threshold, scope, min_cohort_dates — not a different pipeline.
 
 ---
 
-## Colab tips for integration
+## Colab tips
 
-1. Open the **Drive** copy of `…_Colab.ipynb` (not a one-off upload that never writes back).
-2. After a run: mount Drive (export cell) **and/or** download CSVs into `lee_project/marketing_goals/runs/`.
-3. If the agent edited the notebook while Colab was open: **reload** the tab from Drive before the next edit, or paste changes risk overwriting.
-4. Say **“save a version”** after a stable checkpoint you trust.
+1. Use the **Drive** copy of the Colab notebook.
+2. Mount Drive / export under `lee_project/marketing_goals/runs/`.
+3. Reload tab if the agent edited the file while Colab was open.
+4. Folder tags look like `2026-08-05_rp_ls_<HHMMSS>` when both brands ran.
 
 ---
 
 ## Cursor tips
 
-1. Kernel: **Python 3.9** (`/usr/bin/python3`) + `pip install --user pandas-gbq` once.
-2. Run cells here → outputs often embed in the notebook file → agent can open the same file and read them.
-3. Export still writes `runs/` — treat that as the canonical goals table.
+1. Python 3.9+ + `pandas-gbq` as needed.
+2. Export `runs/` is the canonical review surface (filter `brand`).
 
 ---
 
-## Git (same as rest of this repo)
+## Git
 
-Repo: `https://github.com/leejerusalmy-realplay/marketing_goals`  
-Branch: `main`  
-Phrase: **“save a version”** / **“push to main”** / **“go back to …”**
-
-Notebooks are not gitignored — code + structure get versioned. Prefer **not** committing huge embedded outputs if the file balloons; `runs/` CSVs are the intentional artifact.
-
-
----
-
-## Run output naming (same day safe)
-
-Each export uses a unique tag:
-
-`<as_of_date>_<brand_slug>_<HHMMSS>`
-
-- Folder: `runs/2026-08-05_rp_143022/`
-- Files: `combined_goals_2026-08-05_rp_143022.csv`, …
-
-Re-running export later today creates **another** folder/file set; nothing is overwritten.
+Repo: `https://github.com/leejerusalmy-realplay/marketing_goals` · branch `main`  
+Phrases: “save a version” / “push to main” / “go back to …”

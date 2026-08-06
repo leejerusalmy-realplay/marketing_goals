@@ -1,23 +1,33 @@
 *Lee Jerusalmy*
 
-# Config cell & knobs (Combined RP+LS)
+# Config cell & knobs — RealPrize + LoneStar
 
-**Source of truth in production notebooks**
+**Brands:** both run from one Combined config cell (`RUN_BRANDS`). Shared calendar; per-brand dict under `BRAND_CONFIGS`.
 
 | Notebook | Role |
 |----------|------|
-| `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Colab run (auth + Drive) |
-| `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` | Local / Cursor twin |
+| `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Colab |
+| `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` | Cursor / local twin |
 
-**YAML mirrors** (notebooks currently **inline** the same values into `BRAND_CONFIGS` — they do **not** load yaml at runtime):
+YAML mirrors (not loaded at runtime — keep in sync by hand):
 
-- `config/realprize.yaml`
-- `config/lonestar.yaml`
+| Brand | File |
+|-------|------|
+| RealPrize | `config/realprize.yaml` |
+| LoneStar | `config/lonestar.yaml` |
 
-When you change a knob, update **both** the notebook dict and the YAML (and this doc if methodology changes).
+Plain-language Doc: https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit
 
-**Readable twin (plain language):** [LS Marketing Goals Google Doc](https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit) — appendices for knobs / trim / scope.
+---
 
+## How dual-brand works
+
+1. Config defines shared constants + full knobs for **each** brand.
+2. Globals seed from RP first (so helpers define).
+3. Pipeline loop: for each brand in `RUN_BRANDS` → `apply_brand_globals(cfg)` **overwrites** `TRIM_CONFIG`, `CV_*`, `MIN_COHORT_DATES`, etc. → load tables → Parts 1–4.
+4. Outputs stamped with `brand` column and often combined in one pack.
+
+If LS runs without `apply_brand_globals`, it wrongly keeps RP knobs.
 ---
 
 ## What the config cell is
@@ -112,7 +122,7 @@ Helpers then set:
 
 So today Web and Affiliate **share the same organic share number** for LS (`scope=all`). Chart labels “non_app / app” match **RP** (or future LS App), not current LS Combined.
 
-Full flow: `LS_PIPELINE_FLOW.md` Box 2 + organic boxes; Google Doc STEP 2 / 12.
+Full flow: `PIPELINE_FLOW.md` Box 2 + organic boxes; Google Doc STEP 2 / 12.
 
 ---
 
@@ -233,7 +243,7 @@ Locked goals columns:
 |------|------|
 | `TRIM_BY_POPULATION.md` | Per-pop method table + winsor vs trim |
 | `METHODOLOGY.md` | End-to-end formula summary |
-| `LS_PIPELINE_FLOW.md` | Every chart box (technical) |
+| `PIPELINE_FLOW.md` | Every chart box (RP + LS technical) |
 | `WORKED_EXAMPLE_RP_WEB.md` | Numeric RP Web path |
 | `sql_steps/08_*` | Full patch 1→7 pre/post winsor SQL parity |
 | `DECISIONS.md` | Dated locks |

@@ -4,6 +4,9 @@
 **Date:** 2026-08-06  
 **Parent work:** marketing goals unified Colab / Combined rebuild  
 
+**Brands:** both RealPrize and LoneStar. Same CV algorithm; **flag line differs** (RP 0.15 / LS 0.175).  
+Baseline flags appear on **both** brands (table below). Full CV boxes: `PIPELINE_FLOW.md` Box 8 · knobs: `CONFIG_AND_KNOBS.md`.
+
 ---
 
 ## Goal for this agent
@@ -58,7 +61,7 @@ Do **not** edit `reference/`.
 | `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Colab twin — keep in sync if you change helpers |
 | Adaptive CV | `patch_cv_adaptive` in helper cells (CV loop: while CV > 0.10 and removals < max, drop worst |growth − unweighted mean| date) |
 | Config knobs | notebook config + `config/realprize.yaml` / `config/lonestar.yaml` |
-| Methodology | `playbook/LS_PIPELINE_FLOW.md` Box 8 + Google Doc CV addendum |
+| Methodology | `playbook/PIPELINE_FLOW.md` Box 8 + Google Doc CV addendum |
 
 Docs: https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit  
 

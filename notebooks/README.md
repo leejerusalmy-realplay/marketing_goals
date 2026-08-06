@@ -2,12 +2,14 @@
 
 Colab-friendly notebooks for producing goals.
 
-## Current (v1)
+## Current (working copy)
 
 | File | Role |
 |------|------|
 | **`Marketing_Goals_Combined_RP_LS_Colab.ipynb`** | **Use this in Google Colab** (auth + Drive + downloads) |
 | **`Marketing_Goals_Combined_RP_LS.ipynb`** | Cursor / local (service-account JSON) — same logic |
+
+**Frozen first version (v1 archive):** `versions/v1_2026-08_unified_goals_rp_ls/` — do not edit; for history / rollback.
 
 **Agent collaboration** (see outputs, edit cells, git versions): `../playbook/NOTEBOOK_INTEGRATION.md`
 

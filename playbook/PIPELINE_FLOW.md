@@ -1,14 +1,17 @@
 *Lee Jerusalmy*
 
-# LoneStar marketing goals — detailed pipeline (matches your flow chart)
+# Marketing goals pipeline — RealPrize + LoneStar
 
-**Readable Google Doc (plain-language rewrite + examples):**  
+Same machinery for both brands. Production run loops **RP then LS** (or either alone via `RUN_BRANDS`) into one goals table with a `brand` column.
+
+**Readable Google Doc** (plain language; started as LS, appendix covers shared knobs for both):  
 https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit
 
-Status: documented from Combined predecessor + learning Q&A.  
-Chart path: LS → population → cum/DSI → ARPU per patch → winsor → growth → CV → weighted day growth → ARPU D1 → curve → (+ organic share) → adjust with organic? → Need extrapolation? (Yes/No) → adjusted goal.
+**Numeric toy walkthrough (RP Web):** `WORKED_EXAMPLE_RP_WEB.md`  
+**Knob / trim map:** `CONFIG_AND_KNOBS.md`
 
-This file is the long-form / technical twin. Prefer the Google Doc for natural-language reading with small numeric examples.
+Chart path (both brands):  
+brand → population → cum/DSI → ARPU per patch → winsor → growth → CV → weighted day growth → ARPU D1 → curve → (+ organic share) → adjust with organic? → [LS only: extrapolate tail?] → adjusted goal.
 
 ### Quick answers
 
@@ -17,53 +20,80 @@ This file is the long-form / technical twin. Prefer the Google Doc for natural-l
 
 ---
 
-## Global settings (LS Combined)
+## Shared settings (both brands)
 
 | Setting | Value | Notes |
 |---------|--------|------|
-| Brand | LoneStar | |
-| Cost table | `analytics.lonestar_cost_per_user` | Already excludes test/marketing |
-| Deposits | `lonestar.casino_astropay_dmn` | `Status = 'APPROVED'`, amount `/ 100` |
-| as_of_date | today − 2 days | Anchor for “who is mature enough” |
-| ARPU curve populations | **Web, Affiliate** (+ **Blended**) | App commented out until launch |
-| Lookback | **35** cohort dates per patch | `LOOKBACK_COHORTS` |
-| Patches | (1,7), (7,14), (14,30), (30,60), (60,90), (90,120), (120,150), (150,180), (180,270), (270,365) | |
-| Goal horizons | 7, 30, 60, 90, 120, 150, 180, 210, 240, 270, **365** | Not “monthly only” |
-| CV good enough | **0.10** | Stop removing dates |
-| CV flag threshold | **0.175** | Looser than RP’s 0.15 |
-| Max dates removable | **15%** of cost_dates in the patch | `floor(n × 0.15)`, at least 1 |
-| Organic trim | winsor **0%** (off) | |
-| Organic share cap @ 120 | **None on LS** | RP pins long horizons to day-120 share; LS does not |
-| **min_cohort_dates** | **20** | After CV, if fewer than 20 cost_dates left for the patch → **skip patch**. RP uses **1**. |
-| User scope/bucket columns | **No** | Organic helpers default `scope=all`. RP has app/non_app. |
+| as_of_date | today − 2 days | Cohort maturity anchor |
+| Lookback | **35** cost_dates per patch | `LOOKBACK_COHORTS` |
+| Patches | (1,7) … (270,365) | Same list |
+| Goal horizons | 7 … **365** | Day-by-day goals, not monthly-only |
+| CV good enough (stop removing) | **0.10** | Both |
+| Max dates removable | **15%** | ~5 of 35 |
+| Organic-share trim | winsor **0%** (off) | Both |
+| Cohort_trim in production | **No** | Labs only |
+| Day index | life day D → dsi ≤ D−1 | Both |
 
-Excluded affids on LS: **4866, 7127** (TikTok / TikTok Canada).  
-(`id > 0` always.)
-
-Full knob side-by-side (RP vs LS): `CONFIG_AND_KNOBS.md`.
+`id > 0` always. Cost-per-user tables already exclude test/marketing accounts.
 
 ---
 
-## Box 1 — LS
+## Brand settings (side by side)
 
-Everything below is brand-scoped to LoneStar tables and affid maps.  
-Same *machinery* as RealPrize; different affid lists, trim %, CV flag line, no App yet, no organic-share horizon cap.
+| Setting | RealPrize | LoneStar |
+|---------|-----------|----------|
+| Cost table | `analytics.realprize_cost_per_user` | `analytics.lonestar_cost_per_user` |
+| Deposits | `realprize.casino_astropay_dmn` | `lonestar.casino_astropay_dmn` |
+| Exclude affids | **4313** (TikTok) | **4866, 7127** |
+| Curve populations | Web, **App**, Affiliate + Blended | Web, Affiliate + Blended (**no App** yet) |
+| Web winsor | **1%** | **0%** (off) |
+| App winsor | **0%** | n/a |
+| Affiliate winsor | **1%** | **1%** |
+| Blended winsor | **0%** | **0%** |
+| CV flag line | **0.15** | **0.175** |
+| min_cohort_dates | **1** | **20** |
+| Organic share cap | pin at horizon **120** | **None** |
+| Tail extrapolate | **No** | **Yes** (~30 day-steps) |
+| Users SQL scope/bucket | **Yes** (app / non_app) | **No** → organic `scope=all` |
+
+Full detail: `CONFIG_AND_KNOBS.md`.
+
+---
+
+## Box 1 — Brand
+
+Unified Combined runs `RUN_BRANDS = ['realprize', 'lonestar']`.  
+For each brand: `apply_brand_globals` → load tables → Parts 1–4 (curves → Blended → organic → goals).  
+Same recipe; only tables, affid lists, and knobs change (table above).
 
 ---
 
 ## Box 2 — Population
 
-### What happens
+### What happens (both)
 
-1. Pull users from `analytics.lonestar_cost_per_user`.
+1. Pull users from that brand’s `*_cost_per_user` table.
 2. Map each row’s `affid` → a population label.
 3. One row per user: `MIN(cost_date)` = **cohort date** (the clock for all later ARPU).  
    **Not** registration date (`dateReg`).
 
-### LS affid → label
+### RealPrize affid → label (simplified)
 
-| Population | Affids | In own ARPU curve? | In goals? |
-|------------|--------|--------------------|-----------|
+| Population | Affids (representative) | Own ARPU curve? | Goals? |
+|------------|-------------------------|-----------------|--------|
+| **Web** | 63, 2521, 2535, 4957, 4971, 5048, 5062, 5069 | Yes | Yes |
+| **App** | 1 | Yes | Yes |
+| **Affiliate** | everything else not listed elsewhere | Yes | Yes |
+| **PPC** | 64, 71 | No | Blended + organic *acquired* |
+| **Organic** | 0, 78, 2290 | No | Organic share *organic* + Blended |
+| **Blended** | all together | Yes | Yes, **no** organic haircut |
+
+RP also assigns `scope` (app if affid=1 else non_app) and `bucket` (organic/acquired) for organic share.
+
+### LoneStar affid → label
+
+| Population | Affids | Own ARPU curve? | Goals? |
+|------------|--------|-----------------|--------|
 | **Web** | 63, 4432, 4551, 4698, 5048, 5125, 7120, 7253, 7260, 8331, 8345 | Yes | Yes |
 | **Affiliate** | everything else (not listed below) | Yes | Yes |
 | **PPC** | 64, 71 | No | Only via Blended + organic *acquired* |
@@ -101,7 +131,7 @@ When App is live (RP-style):
 ### Filters at this stage
 
 - `id > 0`
-- `affid NOT IN (4866, 7127)`
+- Exclude brand TikTok affids (RP **4313**; LS **4866, 7127**)
 - Cost table already has test/marketing = 0
 
 ### Q&A locked in
@@ -109,6 +139,7 @@ When App is live (RP-style):
 - PPC / Organic: **no own goal curves**.
 - Blended: everyone in one curve.
 - Cohort clock: **cost_date**.
+- RP: full scope/bucket columns; LS: organic share uses `scope=all` until App lands.
 
 ---
 
@@ -200,14 +231,14 @@ You *could* estimate every single day without patches, but then every day would 
 
 ## Box 5 — Winsor? (by population)
 
-### LS production settings (Combined)
+### Production settings (Combined)
 
-| Population | Method | Pct | Meaning |
-|------------|--------|-----|---------|
-| **Web** | winsor | **0%** | Effectively **off** (no capping) |
-| **App** | — | — | Not in LS pipeline yet |
-| **Affiliate** | winsor | **1%** | Cap at ~p99 of depositors’ cum at patch end |
-| **Blended** | winsor | **0%** | Off |
+| Population | RealPrize | LoneStar |
+|------------|-----------|----------|
+| **Web** | winsor **1%** | winsor **0%** (off) |
+| **App** | winsor **0%** | not in pipeline |
+| **Affiliate** | winsor **1%** | winsor **1%** |
+| **Blended** | winsor **0%** | winsor **0%** |
 
 **Cohort_trim is not used in Combined production** (only in TrimComparison lab notebooks).
 
@@ -257,8 +288,8 @@ ARPU_e_w = sum_cum_e_capped / N_users
 growth_w = ARPU_e_w / ARPU_s_w
 ```
 
-For LS **Web** / **Blended**, this equals pre-winsor ARPU (pct = 0).  
-For **Affiliate**, whales no longer dominate growth as much.
+For LS **Web** / **Blended** and RP **App** / **Blended**, this equals pre-winsor ARPU (pct = 0).  
+For RP **Web**, RP/LS **Affiliate** (winsor 1%), whales no longer dominate growth as much.
 
 ---
 
@@ -295,15 +326,18 @@ where \(\mu_w\) and \(\sigma_w\) are the **weighted** mean and std of `growth_ra
 
 **Not** \(\mu/\sigma\). CV is “noise relative to the mean,” so std ÷ mean.
 
-### Hard-coded knobs (LS)
+### Hard-coded knobs (both brands)
 
-| Name | Value | Role |
-|------|--------|------|
-| `CV_GOOD_ENOUGH` | **0.10** | Target: stop removing when CV ≤ 0.10 |
-| `CV_THRESHOLD` | **0.175** | After cleanup, if CV still > 0.175 → **flagged** |
-| `MAX_REMOVE_FRACTION` | **0.15** | Remove at most 15% of dates |
+| Knob | RealPrize | LoneStar | Meaning |
+|------|-----------|----------|---------|
+| CV good enough (stop remove) | **0.10** | **0.10** | Same |
+| CV flag after cleanup | **0.15** | **0.175** | Warning only; patch still used |
+| Max remove fraction | **0.15** | **0.15** | ~5 of 35 dates |
+| min_cohort_dates (after CV) | **1** | **20** | Skip patch if too few dates left |
 
-These are **config constants**, not estimated from data.
+Ranking: worst first by |growth − **unweighted** mean of growths|; then recompute weighted CV after each drop.
+
+These are **config constants**, not estimated from data. See `CONFIG_AND_KNOBS.md`.
 
 ### How dates are chosen for removal (order)
 
@@ -317,12 +351,17 @@ These are **config constants**, not estimated from data.
 
 With 35 dates, max removable = `floor(35 × 0.15) = 5`.
 
-### What happens in the 0.10–0.175 band?
+### What happens in the 0.10 – flag band?
 
-- Removals already happened (or CV started calm).
-- Remaining dates **still used**.
-- **Not flagged** (flag only if final CV > 0.175).
-- Usually means you hit the **15% remove cap** before CV could fall to 0.10.
+After stop (either CV ≤ 0.10 or max removes):
+
+| Final cv_after | RealPrize | LoneStar |
+|----------------|-----------|----------|
+| ≤ flag line | not flagged | not flagged |
+| > 0.15 (RP) / > 0.175 (LS) | **flagged** (still used) | **flagged** (still used) |
+| 0.10 < cv ≤ flag | not flagged (couldn’t fully clean) | same |
+
+If CV already ≤ 0.10 before any drop → remove nobody.
 
 ### Does the script remove dates at all?
 

@@ -1,107 +1,93 @@
 *Lee Jerusalmy*
 
-# Trim & populations cheat sheet (from Combined reference)
+# Trim & populations — RealPrize + LoneStar
 
-Inherited from predecessor Combined notebooks — locked in `config/*.yaml` and `BRAND_CONFIGS` in Combined notebooks.  
-Full config map: **`CONFIG_AND_KNOBS.md`**.
+**Brands:** both. Production method is **winsor** for all live populations.  
+**Full knobs:** `CONFIG_AND_KNOBS.md` · **Pipeline boxes:** `PIPELINE_FLOW.md` § winsor
 
-## Quick map — ARPU curve trim (Combined production)
+---
 
-| Population | RealPrize | LoneStar |
-|------------|-----------|----------|
-| **Web** | winsor **1%** | winsor **0%** (off) |
-| **App** | winsor **0%** (off) | not in pipeline yet |
-| **Affiliate** | winsor **1%** | winsor **1%** |
-| **Blended** | winsor **0%** (off) | winsor **0%** (off) |
-| **PPC** | no ARPU curve (only in organic-share denominator) | same |
-| **Organic** | no ARPU curve (used in organic-share as organic bucket) | same |
+## Shared rules
 
-**Winsor 0%** = method is still “winsor”, but `pct = 0` means **no capping** (cap = ∞; same as no trim for that population).
+| Rule | Both brands |
+|------|-------------|
+| Production method | **winsor** (never cohort_trim in Combined goals) |
+| Winsor 0% | Cap = ∞ → no effect (still labeled winsor) |
+| Cap day | Patch end **e**, depositors-only quantile |
+| Cap applied to | Day s, day e, day-steps inside patch |
+| Users in N | **Keep all** under winsor |
+| Organic-stage trim | winsor **0%** (off) for both |
+| PPC / Organic | No own ARPU curve; only Blended + organic share |
 
-**Cohort trim is not used in Combined production** for any population. It only appears in TrimComparison lab notebooks.
+Cohort_trim (delete top depositors) exists in code/labs only — not production.
+
+---
+
+## What differs by brand / population
+
+| Population | RealPrize | LoneStar | Effect difference |
+|------------|-----------|----------|-------------------|
+| **Web** | winsor **1%** | winsor **0%** | RP Web whales capped; LS Web full $ |
+| **App** | winsor **0%** | not in pipeline | RP has App curve; LS does not |
+| **Affiliate** | winsor **1%** | winsor **1%** | **Same** (p99-style cap) |
+| **Blended** | winsor **0%** | winsor **0%** | **Same** (off) |
+
+### Why Web differs
+
+Inherited from Combined predecessors: RP Web has more whale noise → 1% winsor. LS Web runs uncapped (pct 0).
+
+### Who gets goals
+
+| Population | RP | LS |
+|------------|----|----|
+| Web | yes + organic haircut | yes + organic haircut |
+| App | yes + organic haircut | — |
+| Affiliate | yes + organic haircut | yes + organic haircut |
+| Blended | yes, **raw only** | yes, **raw only** |
+
+Organic haircut uses **scope** (RP: non_app for Web/Aff, app for App; LS: **all** for Web and Aff).
+
+---
 
 ## Do we “trim users”?
 
-| Production method | Answer |
-|-------------------|--------|
-| **winsor** (all live pops) | **No.** User stays in N. Only revenue above the cap is excluded from the sum. |
-| **cohort_trim** (labs) | **Yes.** Top % of depositors by cum at day **e** are removed from the cohort. |
+| Method | Production? | Users | Money |
+|--------|-------------|-------|-------|
+| **winsor** | **Yes** (all live) | stay in N | `min(cum, cap_e)` |
+| **cohort_trim** | **No** (labs) | top depositors dropped | fully out |
 
-“Top % of depositors” ≠ “top % of the whole cohort” — percentile is among users with cum_e > 0.
+“Top %” of **depositors** only (cum_e > 0), not of all users.
 
-## Organic-share trim (separate from ARPU curves)
+---
 
-| | RealPrize | LoneStar |
-|--|-----------|----------|
-| Method | winsor | winsor |
-| Pct | **0%** (off) | **0%** (off) |
+## Cap mechanics (both brands, when pct > 0)
 
-## When does trim run?
+1. At e: `cum_e` per user (dsi ≤ e−1).
+2. Cap = quantile (1 − pct) among depositors in that (population, cost_date).
+3. Sums use `min(cum, cap)` in `sum_cum_at_idx`.
+4. Under winsor, `n_users_pre_trim == n_users_post_trim`.
 
-On every **patch** while building the ARPU curve (1→7, 7→14, …), for that population’s configured method/pct.
+SQL parity: RP Web 1% → `sql_steps/08c` (pre) / `08d` (post).  
+LS Web is always “pre style” for Web (0% = uncapped).
 
-- Mode: **persistent** — if cohort_trim ever drops a user, they stay out of later patches (`excluded_uids`). Winsor does not drop users; it caps revenue each time.
-- Then adaptive **CV** may drop outlier *cohort dates* (not the same as trim).
+---
 
-## Winsor vs cohort_trim (reminder)
+## Where config lives
 
-| | Winsor | Cohort trim |
-|--|--------|-------------|
-| Action | Cap whale revenue at (1−pct) quantile of depositors | Remove top pct of depositors |
-| Users in denominator | Unchanged | Shrinks |
-| Used in Combined today? | **Yes** (table above) | **No** (labs only) |
+| Brand | Notebook `BRAND_CONFIGS['…']['trim_config']` | YAML |
+|-------|-----------------------------------------------|------|
+| RP | Web/Aff 0.01, App/Blended 0 | `config/realprize.yaml` |
+| LS | Aff 0.01, Web/Blended 0 | `config/lonestar.yaml` |
 
-## Cap mechanics (winsor) — nuances
+Applied via global `TRIM_CONFIG` after `apply_brand_globals`.  
+Router: `get_trimmed_cohort_and_caps`.  
+Missing pop defaults to cohort_trim 10% — always list every live pop explicitly.
 
-1. Cap measured at patch **end day e** from depositors only.
-2. Same caps applied to sums at day **s**, day **e**, and every day-step inside the patch (not re-fit per life day).
-3. Life day D uses `dsi ≤ D−1` (same as rest of pipeline).
-4. `sum_cum_at_idx` applies: `cum = min(cum, cap_e)`.
+---
 
-SQL parity (RP Web 1→7 one cohort): `sql_steps/08c_*` pre-winsor, `08d_*` after winsor 1%.
-
-## Where method is **chosen** (config)
-
-**Notebook** (`BRAND_CONFIGS` config cell):
+## Code path (same both brands)
 
 ```text
-'trim_config': {
-    'Web': {'method': 'winsor', 'pct': 0.01},  # RP
-    ...
-}
+get_trimmed_cohort_and_caps → winsor caps (or no-op if pct 0)
+sum_cum_at_idx(..., caps=caps)  → cum = min(cum, cap_e)
 ```
-
-**YAML:** `config/realprize.yaml`, `config/lonestar.yaml`  
-(Notebooks currently **inline** these — update both if you change knobs.)
-
-Organic stage uses separate knobs: `organic_trim_method`, `organic_trim_pct`.
-
-## Where method is **applied** (code)
-
-Helpers cell “trimming & cohort revenue summation”:
-
-| Function | Role |
-|----------|------|
-| `compute_winsor_caps` | Build per-user `cap_e` (or ∞ if pct ≤ 0) |
-| `apply_cohort_trim` | Return smaller user list (lab path) |
-| `get_trimmed_cohort_and_caps` | Router via `TRIM_CONFIG[population]` |
-| `sum_cum_at_idx` | Sum revenue for users in the list; apply caps |
-
-Call chain for ARPU/CV (in `patch_cv_adaptive`):
-
-```text
-trimmed_users, caps = get_trimmed_cohort_and_caps(...)
-N_users  from trimmed_users
-sum_s/e  = sum_cum_at_idx(..., cohort_users=trimmed_users, caps=caps)
-```
-
-Under winsor: `trimmed_users` = full cohort, `newly_excluded` empty, pre/post user counts match.
-
-**Fallback if population missing from TRIM_CONFIG:** defaults to **cohort_trim 10%** — so every production population must stay explicitly in the dict.
-
-## Who gets goals output?
-
-Combined builds goals for: **Web, App (RP only), Affiliate, + Blended**.
-
-- Per-pop goals: adjusted by organic share  
-- Blended goals: raw ratio only (no organic adjustment)

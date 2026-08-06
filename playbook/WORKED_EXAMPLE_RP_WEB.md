@@ -1,9 +1,34 @@
 *Lee Jerusalmy*
 
-# Full worked example — RealPrize, Web
+# Full worked example — RealPrize Web (toy numbers)
 
-Teaching numbers (simplified). Same logic as Combined RealPrize.  
-Focus: one brand, one population (**Web**), through to one goal row.
+**Brands in project:** RP + LS share the same math.  
+**This file only:** **RealPrize · Web** with **simplified teaching numbers** so every formula is hand-checkable.
+
+| This file | Not this file |
+|-----------|----------------|
+| Toy users / ARPU / one goal path | Real BQ extract or Colab run |
+| RP Web knobs (winsor 1%, flag 0.15, …) | LS knobs — see table below |
+| Learning aid | Excel ground truth → use `sql_steps/` |
+
+**If you need LoneStar:** same steps; change tables + knobs from the table.  
+**Real SQL (RP Web fixture):** `sql_steps/08a`–`08d`.  
+**Full pipeline:** `PIPELINE_FLOW.md` · **All knobs:** `CONFIG_AND_KNOBS.md`
+
+### Knobs used in this example vs what LS would use
+
+| Setting | This file (RP Web) | LoneStar Web (for comparison) |
+|---------|--------------------|--------------------------------|
+| Brand / tables | RealPrize | LoneStar tables |
+| Population | Web | Web |
+| Winsor | **1%** | **0%** (numbers = “pre-winsor” style) |
+| CV flag | 0.15 | 0.175 |
+| min_cohort_dates | 1 | 20 |
+| Organic scope for Web goals | **non_app** | **all** |
+| Organic pin @ 120 | yes (if horizon long) | no |
+| Tail extrapolate | no | yes if curve short |
+| Exclude affid | 4313 | 4866, 7127 |
+| Web affids | 63, 2521, 2535, 4957, 4971, 5048, 5062, 5069 | LS web list (see CONFIG) |
 
 ---
 

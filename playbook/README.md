@@ -1,31 +1,34 @@
 *Lee Jerusalmy*
 
-# Playbook
+# Playbook — RealPrize + LoneStar
 
-How to understand and (later) re-run marketing goals.
+How to understand and re-run marketing goals for **both brands** (shared pipeline; brand knobs differ).
 
-## Documents here
+## Documents
 
-| File | What |
-|------|------|
-| `HANDOFF.md` | **Start here** in a new chat — status, next steps, locked understanding |
-| `CONFIG_AND_KNOBS.md` | **Config cell**: patches, brand knobs, min_cohort_dates, scope/bucket, seed globals, where winsor is chosen/applied |
-| `TRIM_BY_POPULATION.md` | Per-pop winsor map; winsor vs cohort_trim; code paths |
-| `LS_PIPELINE_FLOW.md` | Full LS chart pipeline + Q&A (includes curve tail / `is_extrapolated`) |
-| Google Doc | Plain-language LS guide: https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit |
-| `METHODOLOGY.md` | What we calculate and why (formula, data sources, trim, organic, goals) |
-| `WORKED_EXAMPLE_RP_WEB.md` | Numeric RP Web walkthrough |
-| `DECISIONS.md` | Dated locks (trim %, organic cap, etc.) as we decide them |
-| `sql_steps/` | One SQL per calculation for BigQuery → Excel checks |
+| File | Brands | What |
+|------|--------|------|
+| `HANDOFF.md` | both | **New agent start** — locks, status, next steps |
+| `PIPELINE_FLOW.md` | both | Full path box-by-box + RP vs LS tables |
+| `CONFIG_AND_KNOBS.md` | both | Master config: shared calendar + side-by-side knobs |
+| `METHODOLOGY.md` | both | Formula + shared vs different summary |
+| `TRIM_BY_POPULATION.md` | both | Winsor map by pop for each brand |
+| `WORKED_EXAMPLE_RP_WEB.md` | RP toy (+ LS knob compare) | Hand numbers for RP Web only |
+| `DECISIONS.md` | both | Dated locks |
+| `NOTEBOOK_INTEGRATION.md` | both | Agent ↔ Colab/`runs/` |
+| Google Doc | both (appendix + note) | https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit |
+| `sql_steps/` | RP fixtures; LS port notes | Excel SQL |
+| `examples/` | SAMPLE = RP shape; real runs dual | Column layout |
 
 ## Learning order
 
-1. `CONFIG_AND_KNOBS.md` + `TRIM_BY_POPULATION.md` (how knobs work)
-2. Combined RP methodology (`METHODOLOGY.md` + `WORKED_EXAMPLE_RP_WEB.md` + Google Doc / `LS_PIPELINE_FLOW.md`)
-3. LoneStar diffs (no App; different affid / CV / min_cohort / tail; scope=all)
-4. Excel SQL in `sql_steps/` (01 → 08 full patch)
-5. Organic Share and TrimComparison labs when tuning knobs
+1. `HANDOFF.md`
+2. `METHODOLOGY.md` or `CONFIG_AND_KNOBS.md` (shared vs different)
+3. `PIPELINE_FLOW.md` (every step)
+4. Optional: `WORKED_EXAMPLE_RP_WEB.md` if toy numbers help
+5. `sql_steps/` Excel checks
+6. Labs / CV experiments only when tuning
 
 ## Verification rule
 
-For every calculation: explain → runnable SQL in `sql_steps/` → Lee checks in Excel → only then trust the next step.
+Explain → SQL in `sql_steps/` → Excel → only then lock next step.
