@@ -40,7 +40,8 @@ Don’t re-teach locked methodology. Don’t edit reference/.
 | Live Colab RAM | **No** — you run Colab; agent reads files |
 | Live source of truth | Code on Drive + `runs/` + this handoff |
 
-Detail (optional): `NOTEBOOK_INTEGRATION.md`.
+Detail (optional): `NOTEBOOK_INTEGRATION.md`.  
+Topic-specific agent work goes under `playbook/handoffs/` — not a second main HANDOFF.
 
 ---
 
@@ -58,7 +59,8 @@ Detail (optional): `NOTEBOOK_INTEGRATION.md`.
 
 | What | Where |
 |------|--------|
-| **This handoff** | `playbook/HANDOFF.md` |
+| **This handoff (main)** | `playbook/HANDOFF.md` — always first |
+| **Topic handoffs** | `playbook/handoffs/` (e.g. CV optimization) — only for that workstream |
 | **Full pipeline (RP + LS, every box)** | `playbook/PIPELINE_FLOW.md` |
 | **Shared vs brand knobs** | `playbook/CONFIG_AND_KNOBS.md`, `playbook/METHODOLOGY.md` |
 | **Readable Doc** | https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit |

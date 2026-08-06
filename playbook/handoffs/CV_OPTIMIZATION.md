@@ -145,7 +145,7 @@ Baseline offline flags **9/70**, matches run CSV flag set. Thresholds unchanged.
 ```
 Continue marketing goals CV optimization in lee_project/marketing_goals/.
 
-Read playbook/CV_OPTIMIZATION_HANDOFF.md first (or this whole message).
+Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md.
 
 Baseline: run 2026-08-03_rp_ls — 9/70 patches flagged (cv_after > 0.15 RP / 0.175 LS).
 Almost all early 1→7 (+ RP Web short patches + LS Web 180→270). They already removed max ~5/35 dates.
