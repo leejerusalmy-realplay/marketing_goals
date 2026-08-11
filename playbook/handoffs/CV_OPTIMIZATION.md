@@ -1,157 +1,130 @@
-# Handoff — CV cleanup optimization (flag rate)
+*Lee Jerusalmy*
 
-*Lee Jerusalmy*  
-**Date:** 2026-08-06  
-**Parent work:** marketing goals unified Colab / Combined rebuild  
+# Topic handoff — CV optimization
 
-**Brands:** both RealPrize and LoneStar. Same CV algorithm; **flag line differs** (RP 0.15 / LS 0.175).  
-Baseline flags appear on **both** brands (table below). Full CV boxes: `PIPELINE_FLOW.md` Box 8 · knobs: `CONFIG_AND_KNOBS.md`.
-
----
-
-## Goal for this agent
-
-**Reduce the share of patches that remain above the brand CV flag line** after the existing adaptive date-drop step.
-
-Current production-ish thresholds (do not change silently without Lee):
-
-| Brand | Flag if `cv_after` > | Good-enough stop while dropping | Max dates removable |
-|-------|----------------------|----------------------------------|---------------------|
-| RP | **0.15** | 0.10 | 15% of lookback (~5 of 35) |
-| LS | **0.175** | 0.10 | 15% of lookback (~5 of 35) |
-
-**Baseline (run `2026-08-03_rp_ls`, as_of 2026-08-03):**  
-**9 / 70 patches flagged (~12.9%)** — all hit max remove (kept=30) except diagnostics below.
-
-Important product rule today: **flag ≠ drop patch.** Flagged patches **still feed the curve**. Optimization targets *fewer / lower flags*, not deleting life windows, unless Lee explicitly asks for a “drop patch” product change.
+**Read after** main `playbook/HANDOFF.md`.  
+**Opened:** 2026-08-11 — CV knob / cleanup optimization (not re-learn the pipeline).  
+**Last updated:** 2026-08-11 evening — adaptive winsor escalation + revenue-cut cap in Colab notebook (test, not production-locked).
 
 ---
 
-## Flagged patches only (TRUE) — baseline
+## What CV does (enough for this workstream)
 
-| brand | population | patch | cv_before | cv_after | n kept | notes |
-|-------|------------|-------|-----------|----------|--------|-------|
-| realprize | Web | 1→7 | 0.36 | **0.24** | 30 | early life, max drop |
-| realprize | Web | 7→14 | 0.22 | **0.15** | 30 | barely over 0.15 |
-| realprize | Web | 14→30 | 0.54 | **0.22** | 30 | worst RP start |
-| realprize | Web | 30→60 | 0.27 | **0.20** | 30 | |
-| realprize | App | 1→7 | 0.34 | **0.22** | 30 | winsor% = 0 |
-| realprize | Blended | 1→7 | 0.28 | **0.19** | 30 | winsor% = 0 |
-| lonestar | Web | 1→7 | 0.44 | **0.32** | 30 | worst LS early |
-| lonestar | Web | 180→270 | 2.07 | **0.19** | 30 | extreme start, long patch |
-| lonestar | Blended | 1→7 | 0.31 | **0.24** | 30 | |
+Per **patch** (e.g. 1→7), each **cost_date** has:
 
-Pattern: **early 1→7** (and short early Web patches on RP) + **one LS long-horizon Web outlier**.
+`growth = ARPU_e / ARPU_s` (after winsor)
 
-Affiliate (both brands) generally clean after cleanup. Many mid/late patches land ≤ flag line.
+Then:
 
-Full CSV:  
-`marketing_goals/runs/2026-08-03_rp_ls/combined_cv_summary.csv`  
-(also pasted entire table in user message for this chat.)
+1. Weighted CV of those growths: **CV = σ_w / μ_w**, weight = **$ at patch start** (`sum_cum_s`).
+2. Rank cost_dates by `|growth − unweighted mean|` (worst first).
+3. Drop dates one-by-one until weighted CV ≤ **stop target**, or hit max removals.
+4. Remaining dates feed day-steps + diagnostics (`n_cohort_dates_kept`, `flagged`, `mean_after`).
+
+**Not CV:** day-step growth on the curve (that uses kept dates after this cleanup).  
+**Not the same gate as** `min_cohort_dates` (RP 1 / LS 20 on **total** cost_dates in the patch window).
 
 ---
 
-## Where the code lives
+## Current knobs (production defaults — still in config)
+
+| Knob | Role | RealPrize | LoneStar |
+|------|------|-----------|----------|
+| `cv_good_enough` | **Stop removing dates** when CV ≤ this | **0.10** | **0.10** |
+| `cv_threshold` | **Flag** if final CV still > this | **0.15** | **0.175** |
+| `max_remove_fraction` | Max share of cost_dates removable | **0.15** (~5 of 35) | same |
+| Lookback | ~cost_dates per patch | **35** | **35** |
+| Winsor in `TRIM_CONFIG` | Static floor per population | Web/Aff 1%; App/Blended 0% | Web/Blended 0%; Aff 1% |
+
+Lee locked: date-removal target = **0.10 both brands**; brands differ on **flag** only.
+
+---
+
+## Status 2026-08-11 — adaptive winsor test (in Colab only)
+
+### Baseline (before this change)
+
+From `runs/2026-08-03_rp_ls/combined_cv_summary.csv` (as_of **2026-08-03**):
+
+- **70** patches, **9 flagged**.
+- Pain concentrated in **early Web** (and RP App/Blended `1→7`). Affiliate / late patches mostly fine.
+- **27/70** hit date-remove cap (5/35) without reaching `cv_good_enough=0.10`.
+- Prior offline knob replays live under `experiments/cv_results_2026-08-03/` + `experiments/cv_flag_replay_fast.py` (early-max remove, greedy rank, etc.). Softest prior lever was `A_early_max25`; greedy/A25+B moved goals too much.
+
+### What we implemented (test code — not locked in DECISIONS)
+
+**File:** `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` only  
+(local twin `Marketing_Goals_Combined_RP_LS.ipynb` **not** updated yet).
+
+1. **`AS_OF_DATE` pinned** to `2026-08-03` so cohort windows match the baseline run.  
+   Comment says **REVERT** to `now() - 2 days` after this test round / before production adoption.
+
+2. **Per-patch winsor escalation** (inside `patch_cv_adaptive` only):
+   - Ladder: `WINSOR_ESCALATION_STEPS = [0.0, 0.005, 0.01, 0.02, 0.03, 0.05]`
+   - Start at population `TRIM_CONFIG` floor; only climb to steps ≥ floor.
+   - For each candidate: winsor → date removal → `cv_after`.
+   - Stop at **first** pct where `cv_after ≤ CV_THRESHOLD` (RP 0.15 / LS 0.175).
+   - `get_trimmed_cohort_and_caps(..., pct_override=)` returns `trimmed, caps, method, pct_used`.
+   - `cohort_trim` unchanged (no escalation).
+
+3. **Revenue-cut cap** (addendum same day):
+   - `MAX_REVENUE_CUT_FRACTION = 0.15`
+   - At every candidate: `revenue_cut_fraction = 1 - (total_rev_after_trim / total_rev_before_trim)`
+   - If cut **> 15%**: reject that pct, keep previous lower pct, set `capped_by_revenue_limit=True`.
+   - Else if CV cleared → stop success.
+   - Else if no more steps → keep best within revenue limit (may stay flagged).
+   - Distinguishes: flagged because revenue stop vs flagged after exhausting safe steps.
+
+4. **Diagnostics / export**
+   - Stats + report columns: `floor_pct`, `pct_used`, `escalated`, `capped_by_revenue_limit`, `revenue_cut_fraction`, `n_escalation_steps_tried`
+   - Print `>>> WINSOR ESCALATION REPORT` after flagged table
+   - CSV names: `combined_cv_summary_{run_tag}_adaptive_test.csv` and Drive `combined_cv_summary_adaptive_test.csv` (do **not** overwrite baseline `combined_cv_summary.csv`)
+
+### Known gap (important for tomorrow)
+
+**Day-steps in `build_curve` still use config-floor winsor** (only unpack fix for 4-value return).  
+Escalation affects CV date selection + `cv_summary` diagnostics; curve caps are **not** yet passed `pct_used`.  
+If goals should reflect escalated winsor, next small change = pass `pct_used` into the second pass of `build_curve`.
+
+### Do not silently lock
+
+`TRIM_CONFIG` values unchanged. Production knobs not written to YAML / `DECISIONS.md` until Lee approves after comparing adaptive_test vs baseline.
+
+---
+
+## Continue tomorrow — suggested order
+
+1. Confirm Colab run completed with pinned `2026-08-03`; locate `*_adaptive_test.csv` (Downloads and/or `runs/…`).
+2. Diff row-by-row vs `runs/2026-08-03_rp_ls/combined_cv_summary.csv`: flags, `pct_used`, `revenue_cut_fraction`, `capped_by_revenue_limit`.
+3. Decide: is 15% revenue cut + escalation acceptable? Any patches still over-cutting at floor?
+4. Optional: wire `pct_used` into `build_curve` day-steps / D1 caps so goals match CV-stage winsor.
+5. If adopted: revert `AS_OF_DATE` to rolling; sync local twin notebook; lock knobs in config + `DECISIONS.md`; save a version.
+
+---
+
+## Where code lives
+
+| Piece | Location |
+|--------|----------|
+| Adaptive CV + winsor escalation | Colab notebook: `patch_cv_adaptive`, `get_trimmed_cohort_and_caps` |
+| Escalation constants | `WINSOR_ESCALATION_STEPS`, `MAX_REVENUE_CUT_FRACTION` (same cell) |
+| Baseline CV summary | `runs/2026-08-03_rp_ls/combined_cv_summary.csv` |
+| Offline prior experiments | `experiments/cv_flag_replay_fast.py`, `experiments/cv_results_2026-08-03/` |
+| YAML mirror (unchanged) | `config/realprize.yaml`, `config/lonestar.yaml` |
 
 Do **not** edit `reference/`.
 
-| Path | Role |
-|------|------|
-| `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` | Cursor/local twin |
-| `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Colab twin — keep in sync if you change helpers |
-| Adaptive CV | `patch_cv_adaptive` in helper cells (CV loop: while CV > 0.10 and removals < max, drop worst |growth − unweighted mean| date) |
-| Config knobs | notebook config + `config/realprize.yaml` / `config/lonestar.yaml` |
-| Methodology | `playbook/PIPELINE_FLOW.md` Box 8 + Google Doc CV addendum |
-
-Docs: https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit  
-
 ---
 
-## Constraints from owner (Lee)
-
-1. Explain choices in analyst language; small experiments before full rewrites.
-2. Prefer **cheap** tests: re-run CV on cached growth-by-date if possible; avoid full dual-brand BQ every tweak.
-3. Changing knobs (max_remove_fraction, stop rule, ranking of “worst” day, winsor interaction) needs a short **before/after table** on the same as_of: flag count, list of remaining flags, and 2–3 example **goal ratios** so we see if goals move a lot.
-4. Do not silently raise flag thresholds just to “green” the report — that’s cheating metrics. Prefer better cleanup or clearer exceptions.
-5. SQL Excel-check culture still applies for any *new* formula.
-
----
-
-## Sensible experiment menu (pick 1–2 first)
-
-1. **Raise max remove** on early patches only (e.g. allow 20–25% dates for 1→7 / 7→14) — measure flag count + mean |Δ ARPU_e/s| on kept set.
-2. **Weighted worst-date ranking** (rank by impact on weighted CV, not unweighted |g−μ|) — may pick different 5 days.
-3. **Winsor before CV** consistency for Web 1%: confirm growth entering CV is post-winsor (already intended); check if cap strength should rise slightly on flagged Web only.
-4. **Floor weights / min $ or N** per cost_date so tiny cohorts don’t dominate CV noise.
-5. **Soft policy for long patches** (LS 180→270) if remaining flags are forever outliers — document special case rather than global knobs.
-6. **Stop target**: sometimes stop at ≤ flag line (0.15/0.175) instead of insisting on 0.10 when approaching max remove — only if product accepts more aggressive keep under the *flag* bar without chasing 0.10.
-
----
-
-## Success criteria (proposed)
-
-- Cut flagged patches from **9 → ideally ≤ 4–5** on a replay of the same as_of (or document why remaining flags are irreducible noise).
-- No empty patches / no broken day-step curves.
-- Blended / Web / App goals still sensible at D7/D30 (spot check); organic untouched.
-- Report a **knob table** + before/after flag list.
-
----
-
-## Experiment results (2026-08-06) — as_of 2026-08-03, no notebook edits yet
-
-**Replay tool:** `experiments/cv_flag_replay_fast.py` + `experiments/cv_knob_replay.py`  
-**Cache:** `experiments/cache/2026-08-03/` (users/revenue + `patch_growth_series.parquet`)  
-**Outputs:** `experiments/cv_results_2026-08-03/` (`cv_long_all_exps.csv`, `flag_summary.csv`, `spot_goals_compare.csv`)
-
-Baseline offline flags **9/70**, matches run CSV flag set. Thresholds unchanged.
-
-| Experiment | Flag count | Knob notes |
-|------------|------------|------------|
-| baseline | **9/70** | max_remove=0.15, rank=|g−μ_unw| |
-| A_early_max25 | **6/70** | early patches (1→7…30→60) max_remove=0.25 (~8 of 35) |
-| A_early_max30 | **6/70** | early max 0.30 — same flags as 25; diminishing returns |
-| B_greedy_cv | **6/70** | same 0.15 cap; greedily drop date that most reduces weighted CV |
-| **A25+B** | **4/70** | early max 0.25 + greedy rank — hits ≤4–5 target |
-| D_global_max25 | 6/70 | global 0.25; no better than early-only |
-| C_wdev_early25 | 9/70 | rank |g−μ_w|×weight_share — **worse** (can raise CV) |
-
-### Remaining flags (after best pure levers)
-
-**A_early_max25 (6):** LS Web & Blended 1→7, LS Web 180→270, RP Blended 1→7 (cv 0.159 barely over), RP Web 1→7, RP Web 30→60.
-
-**A25+B (4):** LS Web & Blended 1→7, RP Web 1→7 (0.198), RP Web 30→60 (0.157).
-
-### Spot raw goal impact (1 / product of cleaned patch `mean_after`; validates 0.00% vs production on baseline D1/H7/H30)
-
-| Slice | A_early_max25 | B_greedy | A25+B |
-|-------|---------------|----------|-------|
-| RP Web d1/h7 | −1.8% | +5.9% | **+11.8%** |
-| RP Web d1/h30 | +3.8% | +16.4% | **+25.1%** |
-| LS Web d1/h7 | −3.2% | −14.3% | **−19.0%** |
-| RP App d1/h7 | +1.2% | −4.7% | +3.2% |
-
-### Recommendation (pending Lee)
-
-1. **Default product candidate: A_early_max25 only** — cuts flags 9→6 with single-digit goal moves. Code: early-patch-aware `max_remove_fraction` in `patch_cv_adaptive`.
-2. **A25+B only if flag rate is priority** and product accepts large early-LS / mid-RP Web goal shifts.
-3. **Greedy rank alone** good for LS 180→270 (clears with same 5 drops) but moves early means harder — optional second commit after A.
-4. **Do not ship C_wdev.** Special-case LS 180→270 only if remaining after A is acceptable to leave flagged (already product: flag ≠ drop).
-5. Notebooks still production baseline; wire knobs only after approval.
-
----
-
-## Paste into a new Cursor chat
+## Starter for the next chat
 
 ```
-Continue marketing goals CV optimization in lee_project/marketing_goals/.
-
+Continue marketing goals — CV optimization.
 Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md.
-
-Baseline: run 2026-08-03_rp_ls — 9/70 patches flagged (cv_after > 0.15 RP / 0.175 LS).
-Almost all early 1→7 (+ RP Web short patches + LS Web 180→270). They already removed max ~5/35 dates.
-
-Goal: reduce flag rate without silent threshold cheat; flag still means keep patch (unless I approve a product change).
-Code: notebooks Marketing_Goals_Combined_RP_LS*.ipynb patch_cv_adaptive — do not edit reference/.
-Show small experiments first with before/after flag table + spot goal impact.
-CSV: runs/2026-08-03_rp_ls/combined_cv_summary.csv
+Don’t re-teach the full pipeline. Don’t edit reference/.
+Pick up adaptive winsor test: compare *_adaptive_test.csv vs runs/2026-08-03_rp_ls baseline; then decide next (build_curve pct_used vs lock/revert AS_OF).
 ```
+
+---
+
+*Update this file as decisions / experiments complete.*

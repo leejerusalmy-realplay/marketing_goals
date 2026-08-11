@@ -23,12 +23,21 @@ Goal of this file: a new agent can pick up **without** re-deriving the pipeline 
 
 ### Paste into a new agent chat (starter)
 
+**Default (general continue):**
 ```
 Continue marketing goals in lee_project/marketing_goals/.
 Read playbook/HANDOFF.md first (agent handoff).
 Pipeline is RP + LS: playbook/PIPELINE_FLOW.md + CONFIG_AND_KNOBS.md.
 Notebooks: Marketing_Goals_Combined_RP_LS*.ipynb.
 Don’t re-teach locked methodology. Don’t edit reference/.
+```
+
+**For CV optimization workstream (Lee’s next focus as of 2026-08-11):**
+```
+Continue marketing goals — CV optimization.
+Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md.
+Don’t re-teach the full pipeline. Don’t edit reference/.
+Goal: design and run a thoughtful process to optimize CV knobs (by brand), not recap methodology.
 ```
 
 ### Agent ↔ notebook loop (short)
@@ -118,17 +127,18 @@ Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `sr
 
 ## Status / next steps (update when session ends)
 
-**As of 2026-08-06**
+**As of 2026-08-11 (evening)**
 
-- Unified Combined notebooks + playbook knobs/trim walkthrough documented.
-- Playbook pipeline **`PIPELINE_FLOW.md` (RP + LS)**; every major playbook file carries shared vs different brand configs.
-- Step 08 SQL fixtures for RP Web full patch 1→7 (pre/post winsor); LS ports swap tables/knobs.
+- Pipeline learning solid (including CV knobs, min_cohort_dates, curve stitch between patches).
+- **CV optimization in progress** — detail in `playbook/handoffs/CV_OPTIMIZATION.md`.
+- **Colab test (not production-locked):** per-patch **winsor escalation** toward brand `cv_threshold`, with **`MAX_REVENUE_CUT_FRACTION = 0.15`** stop; `AS_OF_DATE` pinned to **2026-08-03** for before/after vs `runs/2026-08-03_rp_ls/`. Export as `*_adaptive_test.csv`.
+- Local twin notebook **not** synced yet. `build_curve` day-steps still use config-floor winsor (known gap).
 
-**Sensible next**
+**Sensible next (priority order)**
 
-1. Continue Excel parity on winsor / patch (08c vs 08d, then multi-date CV).
-2. Or open Colab and parity-spot against reference Combined cells.
-3. Optional later: merge thin playbook markdowns (trim into CONFIG, etc.).
+1. **Tomorrow:** compare adaptive_test CV summary vs baseline; review flags / `pct_used` / revenue-cut caps → decide keep, tweak 15%, or wire `pct_used` into `build_curve`.
+2. If adopted: revert pinned `AS_OF_DATE`, sync local twin, lock in config + `DECISIONS.md`, save a version.
+3. Optional parallel: Excel parity on winsor/patch (08*), Colab vs `reference/` spot-checks.
 
 ---
 
