@@ -1,0 +1,2 @@
+run_tag,as_of_date,brands,brand_slug,run_ts,exported_at,main_columns,env,experiment_tag
+2026-08-03_rp_ls_robust_cv_111132,2026-08-03,"realprize,lonestar",rp_ls,111132,2026-08-12T11:11:32,"brand,population,goal_horizon,day,raw_goal_ratio,organic_share,adjusted_goal_ratio",colab,robust_cv

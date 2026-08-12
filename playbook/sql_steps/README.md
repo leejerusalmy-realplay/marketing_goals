@@ -25,6 +25,8 @@ Most early steps are **RealPrize fixtures** (cheaper first lock). To port a chec
 | 06 | `06_organic_share_non_app_h30_rp.sql` | **RP** non_app | Organic @ H30 — LS would use scope=all |
 | 07 | `07_goal_ratio_from_curve_toy.sql` | Brand-free | raw / adjusted goals |
 | 08 | `08a`–`08d` + `08_python_parity_README.md` | **RP Web** fixture | Full patch 1→7 pre/post winsor 1% |
+| 09 | `09_prev_month_best_goal_horizon.sql` | RP + LS | Prev calendar month ROAS vs adjusted goals → best H (RMSE) |
+| 09a | `09a_prev_month_roas_checkpoints.sql` | RP + LS | Prev-month ROAS only (join to goals in Sheets) |
 
 Each file: runnable alone in BigQuery → Excel → verify before next step.
 

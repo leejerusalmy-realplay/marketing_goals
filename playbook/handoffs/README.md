@@ -18,7 +18,7 @@ When a workstream is done, leave the file as archive or mark it done in the head
 
 | File | Topic | Status |
 |------|--------|--------|
-| `CV_OPTIMIZATION.md` | Reduce CV-flagged patches (RP + LS) | Open experiment — 2026-08 |
+| `CV_OPTIMIZATION.md` | Optimize CV knobs (stop/flag/max-remove) by brand — baseline then experiments | **Next chat focus** — open 2026-08-11 |
 
 ## How agents create a new handoff
 

@@ -127,18 +127,23 @@ Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `sr
 
 ## Status / next steps (update when session ends)
 
-**As of 2026-08-11 (evening)**
+**As of 2026-08-12**
 
 - Pipeline learning solid (including CV knobs, min_cohort_dates, curve stitch between patches).
-- **CV optimization in progress** — detail in `playbook/handoffs/CV_OPTIMIZATION.md`.
-- **Colab test (not production-locked):** per-patch **winsor escalation** toward brand `cv_threshold`, with **`MAX_REVENUE_CUT_FRACTION = 0.15`** stop; `AS_OF_DATE` pinned to **2026-08-03** for before/after vs `runs/2026-08-03_rp_ls/`. Export as `*_adaptive_test.csv`.
-- Local twin notebook **not** synced yet. `build_curve` day-steps still use config-floor winsor (known gap).
+- **CV optimization in progress** — log: `experiments/cv_optimization/EXPERIMENT_LOG.md`; handoff `playbook/handoffs/CV_OPTIMIZATION.md`; index `experiments/cv_optimization/README.md`.
+- **Layout (Option B):** generic Combined stays in `notebooks/`; each CV trial is its own Colab under `experiments/cv_optimization/<variant>/`.
+  - `winsor_escalation/` archived (flags 9→8 capped).
+  - `window_escalation/` lookback ladder (LS thr 0.15).
+  - `robust_cv/` / `cv_diagnosis/` — leave untouched if running / already exported.
+  - `cv_oos_backtest/` **ready** — walk-forward: does high CV predict worse OOS goal error?
+- Generic Colab stays **pre-winsor** baseline code (no experiment ladders).
 
 **Sensible next (priority order)**
 
-1. **Tomorrow:** compare adaptive_test CV summary vs baseline; review flags / `pct_used` / revenue-cut caps → decide keep, tweak 15%, or wire `pct_used` into `build_curve`.
-2. If adopted: revert pinned `AS_OF_DATE`, sync local twin, lock in config + `DECISIONS.md`, save a version.
-3. Optional parallel: Excel parity on winsor/patch (08*), Colab vs `reference/` spot-checks.
+1. Run `experiments/cv_optimization/cv_oos_backtest/…Colab.ipynb` (biweekly cutoffs, ~180d — slower than a single goals run).
+2. Update `experiments/cv_optimization/README.md` with CV↔OOS findings (especially 1→7 vs mature patches).
+3. Only after a decision: merge into generic + `DECISIONS.md`; do not change thr from this notebook alone.
+4. Optional parallel: Excel parity (08*), Colab vs `reference/` spot-checks.
 
 ---
 

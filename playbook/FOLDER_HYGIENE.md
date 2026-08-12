@@ -17,6 +17,7 @@ marketing_goals/
     versions/         # frozen v1, v2, …
   runs/               # dated CSV exports only
   experiments/        # scratch + cv results (cache gitignored)
+    cv_optimization/  # parallel CV variant Colabs + index README
   reference/          # frozen predecessors — do not edit
   config/             # yaml knobs (mirror notebook)
   src/                # future package

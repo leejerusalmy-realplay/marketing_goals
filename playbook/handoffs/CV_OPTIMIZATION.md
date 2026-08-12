@@ -4,7 +4,7 @@
 
 **Read after** main `playbook/HANDOFF.md`.  
 **Opened:** 2026-08-11 — CV knob / cleanup optimization (not re-learn the pipeline).  
-**Last updated:** 2026-08-11 evening — adaptive winsor escalation + revenue-cut cap in Colab notebook (test, not production-locked).
+**Last updated:** 2026-08-12 — experiment log filled (`experiments/cv_optimization/EXPERIMENT_LOG.md`). Current focus: `cv_oos_backtest`.
 
 ---
 
@@ -49,7 +49,7 @@ From `runs/2026-08-03_rp_ls/combined_cv_summary.csv` (as_of **2026-08-03**):
 - **70** patches, **9 flagged**.
 - Pain concentrated in **early Web** (and RP App/Blended `1→7`). Affiliate / late patches mostly fine.
 - **27/70** hit date-remove cap (5/35) without reaching `cv_good_enough=0.10`.
-- Prior offline knob replays live under `experiments/cv_results_2026-08-03/` + `experiments/cv_flag_replay_fast.py` (early-max remove, greedy rank, etc.). Softest prior lever was `A_early_max25`; greedy/A25+B moved goals too much.
+- Prior offline knob replays: `experiments/cv_optimization/offline_2026-08-03/` (early-max remove, greedy rank, etc.). Softest prior lever was `A_early_max25`; greedy/A25+B moved goals too much.
 
 ### What we implemented (test code — not locked in DECISIONS)
 
@@ -92,13 +92,46 @@ If goals should reflect escalated winsor, next small change = pass `pct_used` in
 
 ---
 
-## Continue tomorrow — suggested order
+## Comparison result (2026-08-12)
 
-1. Confirm Colab run completed with pinned `2026-08-03`; locate `*_adaptive_test.csv` (Downloads and/or `runs/…`).
-2. Diff row-by-row vs `runs/2026-08-03_rp_ls/combined_cv_summary.csv`: flags, `pct_used`, `revenue_cut_fraction`, `capped_by_revenue_limit`.
-3. Decide: is 15% revenue cut + escalation acceptable? Any patches still over-cutting at floor?
-4. Optional: wire `pct_used` into `build_curve` day-steps / D1 caps so goals match CV-stage winsor.
-5. If adopted: revert `AS_OF_DATE` to rolling; sync local twin notebook; lock knobs in config + `DECISIONS.md`; save a version.
+**Primary file:** `runs/2026-08-03_rp_ls_143601/combined_cv_summary_adaptive_test.csv` (has revenue-cap columns).  
+**Earlier same day (no rev cap):** `runs/2026-08-03_rp_ls_133829/…`  
+**Write-up:** `experiments/cv_optimization/winsor_escalation/cv_adaptive_vs_baseline_2026-08-12.md`
+
+| | Baseline | + adaptive + abs 15% rev cap | adaptive, no rev cap |
+|--|----------|------------------------------|----------------------|
+| Flagged / 70 | 9 | **8** | **3** |
+| Escalated | — | 7 | 9 |
+
+- Only **RP Web 7→14** newly cleared under the capped run (`1%→2%`).
+- Still flagged: RP Web 1→7 / 14→30 / 30→60; RP App 1→7; RP+LS Blended 1→7; LS Web 1→7 / 180→270.
+- Absolute 15% $ cut **blocks** most useful climbs; without cap, 5% winsor on early Web (too aggressive).
+- Affiliate floor 1% already cuts **25–49%** $ → `capped_by_revenue_limit=True` noise (CV already fine).
+- **Goals/organic CSVs are not clean judges** of this test (RP App organic H=90 moved ~6pp; `build_curve` still on floor winsor).
+
+**Verdict:** do **not** lock adaptive winsor yet — **parked for manager review** (Lee). Not a closed reject.
+
+### Folder layout (Option B — 2026-08-12)
+
+Index: `experiments/cv_optimization/README.md`
+
+| Path | Role |
+|------|------|
+| `notebooks/Marketing_Goals_Combined_RP_LS*_` | **Generic** Combined (restored pre-winsor; no CV ladders) |
+| `experiments/cv_optimization/winsor_escalation/` | Archived winsor-ladder Colab + prior runs |
+| `experiments/cv_optimization/window_escalation/` | Lookback ladder + LS thr 0.15 |
+| `experiments/cv_optimization/robust_cv/` | Robust CV side-by-side (LS thr 0.15) — **do not overwrite while running** |
+| `experiments/cv_optimization/cv_diagnosis/` | Exploratory — why is CV high? |
+| `experiments/cv_optimization/cv_oos_backtest/` | **Walk-forward** — does CV predict OOS goal error? |
+
+### Sensible next (priority)
+
+**Log:** `experiments/cv_optimization/EXPERIMENT_LOG.md` · GPT spec: `cv_oos_backtest/GPT_SPEC_walkforward.md`
+
+1. **Run / finish** `cv_oos_backtest` → export → update EXPERIMENT_LOG Results.
+2. **Dynamic winsor:** review with manager (parked — see EXPERIMENT_LOG §1).
+3. Decide thresholds only after OOS evidence (+ manager call on winsor).
+4. Do not merge into generic until Lee locks a decision.
 
 ---
 
@@ -106,10 +139,12 @@ If goals should reflect escalated winsor, next small change = pass `pct_used` in
 
 | Piece | Location |
 |--------|----------|
-| Adaptive CV + winsor escalation | Colab notebook: `patch_cv_adaptive`, `get_trimmed_cohort_and_caps` |
-| Escalation constants | `WINSOR_ESCALATION_STEPS`, `MAX_REVENUE_CUT_FRACTION` (same cell) |
+| Experiment index | `experiments/cv_optimization/README.md` |
+| Window-escalation Colab | `experiments/cv_optimization/window_escalation/` |
+| Winsor-escalation Colab (archived) | `experiments/cv_optimization/winsor_escalation/` |
+| Generic Combined (no CV ladders) | `notebooks/Marketing_Goals_Combined_RP_LS*_` |
 | Baseline CV summary | `runs/2026-08-03_rp_ls/combined_cv_summary.csv` |
-| Offline prior experiments | `experiments/cv_flag_replay_fast.py`, `experiments/cv_results_2026-08-03/` |
+| Offline prior experiments | `experiments/cv_optimization/offline_2026-08-03/` |
 | YAML mirror (unchanged) | `config/realprize.yaml`, `config/lonestar.yaml` |
 
 Do **not** edit `reference/`.
@@ -120,9 +155,10 @@ Do **not** edit `reference/`.
 
 ```
 Continue marketing goals — CV optimization.
-Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md.
+Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md
+and experiments/cv_optimization/README.md.
 Don’t re-teach the full pipeline. Don’t edit reference/.
-Pick up adaptive winsor test: compare *_adaptive_test.csv vs runs/2026-08-03_rp_ls baseline; then decide next (build_curve pct_used vs lock/revert AS_OF).
+Next: finish cv_oos_backtest; update EXPERIMENT_LOG; winsor escalation parked for manager.
 ```
 
 ---

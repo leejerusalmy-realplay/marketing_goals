@@ -6,13 +6,17 @@ Dated output of a goals run. **Never overwrite** — each export creates a new f
 
 ```text
 runs/<as_of_date>_<brand_slug>_<run_ts>/
+runs/<as_of_date>_<brand_slug>_<experiment_tag>_<run_ts>/   ← CV / A-B trials
 ```
 
 | Piece | Meaning | Example |
 |-------|---------|---------|
 | `as_of_date` | Cohort anchor from notebook (usually today − 2) | `2026-08-05` |
 | `brand_slug` | Brands in this run: `rp`, `ls`, or `rp_ls` | `rp` |
+| `experiment_tag` | Optional — CV trial name (e.g. `window_escalation`) | `window_escalation` |
 | `run_ts` | Clock time of **export** (`HHMMSS`) so same-day re-runs stay separate | `143022` |
+
+CV experiment notebooks and the variant index live under `experiments/cv_optimization/`.
 
 Examples:
 - First RP-only export today: `2026-08-05_rp_140512/`
