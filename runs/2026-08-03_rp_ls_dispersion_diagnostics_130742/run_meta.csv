@@ -1,0 +1,2 @@
+run_tag,as_of_date,brands,brand_slug,run_ts,exported_at,env,experiment_tag,purpose
+2026-08-03_rp_ls_dispersion_diagnostics_130742,2026-08-03,"realprize,lonestar",rp_ls,130742,2026-08-13T13:07:42,colab,dispersion_diagnostics,dispersion_diagnostics_only

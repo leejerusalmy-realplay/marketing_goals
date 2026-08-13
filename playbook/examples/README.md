@@ -13,5 +13,5 @@
 | `SAMPLE_realprize_combined_organic_share.csv` | Organic (RP has scope columns) |
 | `SAMPLE_realprize_combined_cv_summary.csv` | CV flags |
 
-For real dual-brand outputs, open `runs/2026-08-03_rp_ls/*.csv` and filter by `brand`.  
+For real dual-brand outputs, open `runs/2026-08-03_rp_ls_baseline/*.csv` and filter by `brand`.  
 LS organic share is typically `scope=all` (no app/non_app split). Knobs: `CONFIG_AND_KNOBS.md`.

@@ -12,7 +12,7 @@
 Same pipeline for **RealPrize + LoneStar** → one goals table (`brand` column).  
 Living/working copies (keep editing these): `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb`.
 
-Sample run CSVs from early use: `runs/2026-08-03_rp_ls/`.
+Sample run CSVs from early use: `runs/2026-08-03_rp_ls_baseline/`.
 
 Knobs / pipeline: `playbook/CONFIG_AND_KNOBS.md`, `playbook/PIPELINE_FLOW.md`, `playbook/HANDOFF.md`.
 

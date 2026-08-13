@@ -23,6 +23,10 @@ marketing_goals/
   src/                # future package
 ```
 
+## Language
+
+**English only** in files under `marketing_goals/` (docs, labels, comments). Chat with Lee may be Hebrew; repo content stays English.
+
 ## Defaults
 
 | Do | Don’t |

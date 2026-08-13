@@ -32,12 +32,13 @@ Notebooks: Marketing_Goals_Combined_RP_LS*.ipynb.
 Don’t re-teach locked methodology. Don’t edit reference/.
 ```
 
-**For CV optimization workstream (Lee’s next focus as of 2026-08-11):**
+**For CV optimization — next stage `cv_oos_backtest` (as of 2026-08-13):**
 ```
-Continue marketing goals — CV optimization.
-Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md.
+Continue marketing goals — CV optimization, next stage: cv_oos_backtest.
+Read playbook/HANDOFF.md first, then playbook/handoffs/CV_OPTIMIZATION.md
+and experiments/cv_optimization/EXPERIMENT_LOG.md (at a glance + §6).
 Don’t re-teach the full pipeline. Don’t edit reference/.
-Goal: design and run a thoughtful process to optimize CV knobs (by brand), not recap methodology.
+Goal: finish walk-forward OOS — does high CV predict worse goal error?
 ```
 
 ### Agent ↔ notebook loop (short)
@@ -119,7 +120,7 @@ Shared flow chart:
 
 - **Colab:** `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb`
 - **Local twin:** `notebooks/Marketing_Goals_Combined_RP_LS.ipynb`
-- **Sample run CSVs:** `runs/2026-08-03_rp_ls/`
+- **Sample run CSVs:** `runs/2026-08-03_rp_ls_baseline/`
 
 Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `src/` later.
 
@@ -127,23 +128,23 @@ Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `sr
 
 ## Status / next steps (update when session ends)
 
-**As of 2026-08-12**
+**As of 2026-08-13**
 
-- Pipeline learning solid (including CV knobs, min_cohort_dates, curve stitch between patches).
-- **CV optimization in progress** — log: `experiments/cv_optimization/EXPERIMENT_LOG.md`; handoff `playbook/handoffs/CV_OPTIMIZATION.md`; index `experiments/cv_optimization/README.md`.
-- **Layout (Option B):** generic Combined stays in `notebooks/`; each CV trial is its own Colab under `experiments/cv_optimization/<variant>/`.
-  - `winsor_escalation/` archived (flags 9→8 capped).
-  - `window_escalation/` lookback ladder (LS thr 0.15).
-  - `robust_cv/` / `cv_diagnosis/` — leave untouched if running / already exported.
-  - `cv_oos_backtest/` **ready** — walk-forward: does high CV predict worse OOS goal error?
-- Generic Colab stays **pre-winsor** baseline code (no experiment ladders).
+- Pipeline learning solid. CV workstream active — see `playbook/handoffs/CV_OPTIMIZATION.md`.
+- **Log:** `experiments/cv_optimization/EXPERIMENT_LOG.md` (start with **Experiments at a glance**).
+- **Closed / parked highlights:**
+  - Dispersion: high CV mostly real/central → **keep CV** (no MAD/IQR replace).
+  - Window escalation **reject**; robust_cv **reject** as replace.
+  - Winsor escalation (capped): `cv_after>0.15` **11→8** — Lee’s **best closed trial**; still **park** for manager.
+- **Next stage:** `cv_oos_backtest` — does high CV predict worse OOS goal reliability?
+- Generic Colab stays baseline (no experiment ladders). English only in `marketing_goals/` files.
 
 **Sensible next (priority order)**
 
-1. Run `experiments/cv_optimization/cv_oos_backtest/…Colab.ipynb` (biweekly cutoffs, ~180d — slower than a single goals run).
-2. Update `experiments/cv_optimization/README.md` with CV↔OOS findings (especially 1→7 vs mature patches).
-3. Only after a decision: merge into generic + `DECISIONS.md`; do not change thr from this notebook alone.
-4. Optional parallel: Excel parity (08*), Colab vs `reference/` spot-checks.
+1. Run / finish `experiments/cv_optimization/cv_oos_backtest/…Colab.ipynb` → export under `runs/…_cv_oos_backtest_<ts>/`.
+2. Update EXPERIMENT_LOG §6 + README (esp. 1→7 vs mature; CV ~20–30%).
+3. Manager review on winsor (parallel); lock nothing into generic/`DECISIONS.md` until Lee decides.
+4. Optional: Excel parity (08*), Colab vs `reference/` spot-checks.
 
 ---
 

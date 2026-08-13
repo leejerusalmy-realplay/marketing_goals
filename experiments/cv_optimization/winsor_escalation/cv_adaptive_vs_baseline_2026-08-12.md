@@ -2,9 +2,9 @@
 
 # Adaptive winsor test vs baseline (2026-08-12)
 
-**Baseline:** `runs/2026-08-03_rp_ls/combined_cv_summary.csv`  
-**Adaptive (with revenue cap):** `runs/2026-08-03_rp_ls_143601/combined_cv_summary_adaptive_test.csv`  
-**Adaptive (no revenue cap, earlier same day):** `runs/2026-08-03_rp_ls_133829/…`
+**Baseline:** `runs/2026-08-03_rp_ls_baseline/combined_cv_summary.csv`  
+**Adaptive (with revenue cap):** `runs/2026-08-03_rp_ls_winsor_escalation_143601/combined_cv_summary_adaptive_test.csv`  
+**Adaptive (no revenue cap, earlier same day):** `runs/2026-08-03_rp_ls_winsor_escalation_nocap_133829/…`
 
 Both adaptive runs: `as_of_date=2026-08-03` (pinned).
 

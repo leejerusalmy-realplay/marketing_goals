@@ -12,58 +12,58 @@ How to understand and re-run marketing goals for **both brands** (shared pipelin
 
 | File | Purpose | When you open it |
 |------|---------|------------------|
-| **`HANDOFF.md`** | **האנדוף הראשי.** סטטוס, מה כבר נעול, מה הצעד הבא, כללי עבודה. | **כל צ'אט סוכן חדש** — קודם כל |
-| **`handoffs/`** | האנדופים **נושאיים** (ניסוי CV, …). לא מחליפים את הראשי. | רק כשעובדים על אותו נושא |
-| **`FOLDER_HYGIENE.md`** | כללי ניקיון Drive + git | לפני יצירת תיקיות/קבצים חדשים |
+| **`HANDOFF.md`** | **Main handoff.** Status, what is locked, next step, working rules. | **Every new agent chat** — first |
+| **`handoffs/`** | **Topic** handoffs (CV experiment, …). Do not replace the main handoff. | Only when working that topic |
+| **`FOLDER_HYGIENE.md`** | Drive + git hygiene rules | Before creating new folders/files |
 
-### 2. “איך זה עובד” (methodology)
+### 2. How it works (methodology)
 
 | File | Purpose | Level |
 |------|---------|--------|
-| **`METHODOLOGY.md`** | מה אנחנו מחשבים + **מה משותף / מה שונה** בין RP ל-LS (תמצית). | קצר — first orientation |
-| **`PIPELINE_FLOW.md`** | **כל שלב בצינור** (boxes): patch → winsor → CV → curve → organic → goals, עם דוגמאות. | מלא — “איך זה רץ” |
-| **`CONFIG_AND_KNOBS.md`** | **כל הכפתורים** (as_of, patches, trim_config, CV, min_cohort_dates, scope…). איפה בקוד וב-yaml. | מפת knobs |
-| **`TRIM_BY_POPULATION.md`** | רק trim/winsor **לפי population** (Web 1% vs 0%…). חיתוך מ-CONFIG. | cheat sheet winsor |
-| **`WORKED_EXAMPLE_RP_WEB.md`** | **דוגמת מספרים צעצועית** (RP Web) לעשות חשבון ביד. לא run אמיתי. | כשאת רוצה לראות נוסחאות במספרים |
+| **`METHODOLOGY.md`** | What we compute + **shared vs different** RP vs LS (summary). | Short — first orientation |
+| **`PIPELINE_FLOW.md`** | **Every pipeline step** (boxes): patch → winsor → CV → curve → organic → goals, with examples. | Full — “how it runs” |
+| **`CONFIG_AND_KNOBS.md`** | **All knobs** (as_of, patches, trim_config, CV, min_cohort_dates, scope…). Where in code and yaml. | Knob map |
+| **`TRIM_BY_POPULATION.md`** | Trim/winsor **by population** only (Web 1% vs 0%…). Cut from CONFIG. | Winsor cheat sheet |
+| **`WORKED_EXAMPLE_RP_WEB.md`** | **Toy numeric example** (RP Web) for hand calculation. Not a real run. | When you want formulas in numbers |
 
-### 3. תפעול / היסטוריה
+### 3. Ops / history
 
 | File | Purpose |
 |------|---------|
-| **`NOTEBOOK_INTEGRATION.md`** | איך סוכן + את + Colab + `runs/` עובדים יחד (לא מתודולוגיה). |
-| **`DECISIONS.md`** | **יומן החלטות** מתוארך — מה ננעל מתי. לא הסבר של הפייפליין. |
-| **`sql_steps/`** | שאילתות Excel-check (בדרך כלל RP fixtures; math משותף). |
-| **`examples/`** | CSVs לדוגמה (צורת עמודות). |
+| **`NOTEBOOK_INTEGRATION.md`** | How agent + you + Colab + `runs/` work together (not methodology). |
+| **`DECISIONS.md`** | **Dated decision log** — what locked when. Not a pipeline explainer. |
+| **`sql_steps/`** | Excel-check queries (usually RP fixtures; shared math). |
+| **`examples/`** | Example CSVs (column shapes). |
 
 ### Google Doc
-Plain-language twin (קריאה רגועה):  
+Plain-language twin (easier reading):  
 https://docs.google.com/document/d/1rTx9-CdjUaaOESO6D0kRY-xtJ5TkwwIbG1Ia3ObzMns/edit
 
 ---
 
-## למה לא מאחדים הכול לקובץ אחד?
+## Why not one big file?
 
-| צורך | קובץ |
+| Need | File |
 |------|------|
-| “מה קורה אחרי הקלקה בסוכן חדש?” | HANDOFF |
-| “איך בונים goal מספרית?” | PIPELINE + WORKED_EXAMPLE |
-| “איזה % winsor ל-Web ב-LS?” | CONFIG / TRIM |
-| “מה החלטנו ב-30.7?” | DECISIONS |
-| “איך לשתף run עם הסוכן?” | NOTEBOOK_INTEGRATION |
+| “What happens after a new agent starts?” | HANDOFF |
+| “How is a numeric goal built?” | PIPELINE + WORKED_EXAMPLE |
+| “What winsor % for Web on LS?” | CONFIG / TRIM |
+| “What did we decide on 30.7?” | DECISIONS |
+| “How do I share a run with the agent?” | NOTEBOOK_INTEGRATION |
 
-אותו ידע מופיע בכמה מקומות **בקצרה**, עם קישור למקור המלא — כדי לא לאבד הכוון.
+The same knowledge appears briefly in a few places, with links to the full source — so orientation is not lost.
 
 ---
 
 ## Learning order
 
 1. `HANDOFF.md`
-2. `METHODOLOGY.md` או `CONFIG_AND_KNOBS.md` (shared vs different)
+2. `METHODOLOGY.md` or `CONFIG_AND_KNOBS.md` (shared vs different)
 3. `PIPELINE_FLOW.md`
-4. אופציונלי: `WORKED_EXAMPLE_RP_WEB.md`
-5. `sql_steps/` ל-Excel
-6. `handoffs/<topic>.md` רק לנושאים ממוקדים
+4. Optional: `WORKED_EXAMPLE_RP_WEB.md`
+5. `sql_steps/` for Excel
+6. `handoffs/<topic>.md` only for focused topics
 
 ## Verification rule
 
-Explain → SQL in `sql_steps/` → Excel → רק אז נעולים.
+Explain → SQL in `sql_steps/` → Excel → only then lock.
