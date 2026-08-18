@@ -32,6 +32,17 @@ Notebooks: Marketing_Goals_Combined_RP_LS*.ipynb.
 Don’t re-teach locked methodology. Don’t edit reference/.
 ```
 
+**For LS App (as of 2026-08-18):**
+```
+Continue marketing goals — LS App bootstrap.
+Read playbook/HANDOFF.md first, then playbook/handoffs/LS_APP.md
+and experiments/ls_app_bootstrap/NOTES.md.
+Don’t re-teach the full pipeline. Don’t edit reference/.
+Don’t lock into generic notebooks/ or DECISIONS.md.
+Lee’s current Combined freeze is v3 winsor_esc + LS App
+(notebooks/versions/v3_2026-08_winsor_esc_ls_app/), not generic Combined.
+```
+
 **For CV optimization — next stage `cv_oos_backtest` (as of 2026-08-13):**
 ```
 Continue marketing goals — CV optimization, next stage: cv_oos_backtest.
@@ -128,23 +139,57 @@ Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `sr
 
 ## Status / next steps (update when session ends)
 
-**As of 2026-08-13**
+**As of 2026-08-18**
 
-- Pipeline learning solid. CV workstream active — see `playbook/handoffs/CV_OPTIMIZATION.md`.
-- **Log:** `experiments/cv_optimization/EXPERIMENT_LOG.md` (start with **Experiments at a glance**).
-- **Closed / parked highlights:**
-  - Dispersion: high CV mostly real/central → **keep CV** (no MAD/IQR replace).
-  - Window escalation **reject**; robust_cv **reject** as replace.
-  - Winsor escalation (capped): `cv_after>0.15` **11→8** — Lee’s **best closed trial**; still **park** for manager.
-- **Next stage:** `cv_oos_backtest` — does high CV predict worse OOS goal reliability?
-- Generic Colab stays baseline (no experiment ladders). English only in `marketing_goals/` files.
+- **April freeze (done):** Combined as of 2026-04-10 vs Apr 10–14 actuals.
+  - Production: `runs/2026-04-10_rp_ls_goal120_realized_133457/`
+  - Capped winsor_esc: `runs/2026-04-10_rp_ls_goal120_realized_winsor_esc_073346/`
+  - Verdict: almost the same; only LS Web moved meaningfully (esc closer). Not a lock.
+  - Ignore `runs/2026-08-14_rp_ls_132733/` (accidental generic Combined RUN).
+- **July freeze (done):** same two engines, `AS_OF_DATE = 2026-07-10`, actuals through **2026-08-17**.
+  - Code: `experiments/goal120_realized_2026-07-10/`
+  - Production: `runs/2026-07-10_rp_ls_goal120_realized_064344/`
+  - Capped winsor_esc: `runs/2026-07-10_rp_ls_goal120_realized_winsor_esc_064344/`
+  - Day 120 is incomplete (max 39 life days), so **primary = shape so far** on a fixed cohort:
+    `first_day` = 10 Jul users only, score `ARPU(d)/ARPU(39)` vs frozen `ARPU_nominal(d)/ARPU_nominal(39)`.
+    `first_5_days` = 10–14 Jul users, same idea to day 35.
+    `overall_level` = dollars only; do **not** use for shape.
+  - Main comparison file: `compare_vs_production.csv` in the winsor folder.
+  - **Verdict:** no big overall winner. On the main slice (`first_day`) winsor_esc is a **small improvement**:
+    wins on LS Web, RP App, RP Web; ties on LS Aff, LS Blended, RP Aff, RP Blended; loses nowhere.
+    On `first_5_days` the picture is mixed: production wins LS Web + RP App, winsor wins RP Web, rest ties.
+    Bottom line: winsor helps a little in a few places, changes almost nothing elsewhere.
+- **How Lee should read the July files:**
+  - `compare_vs_production.csv` = engine vs engine; lower `shape_mae` wins.
+  - `error_summary.csv` = one-engine scorecard by brand/pop/slice.
+  - `compare_daily.csv` = full day-by-day path behind the plots.
+  - Plot names: `first_day` = 10 Jul arrivals only; `first_5_days` = arrivals on 10–14 Jul.
+- **Winsor notebook freeze (2026-08-18):**
+  - Archived capped `winsor_escalation` Colab notebook under
+    `notebooks/versions/v2_2026-08_winsor_escalation_combined/`.
+  - Generic `notebooks/` remain baseline.
+- **v3 LS App freeze (2026-08-18):**
+  - `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
+  - v2 winsor_esc plus LS App (`native_early_rp_tail`). Provisional, not a lock.
+- **LS App (2026-08-18) — next chat focus:** `playbook/handoffs/LS_APP.md`
+  - Write-up: `experiments/ls_app_bootstrap/NOTES.md`
+  - Colab (working copy): `experiments/ls_app_bootstrap/Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb`
+  - Freeze: `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
+  - Combined export: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`
+  - Method compare: `runs/2026-08-17_ls_app_bootstrap_114318/`
+  - Provisional method: **`native_early_rp_tail`**. Winsor App 0% (no escalation). Organic **off**. Blended excludes App.
+  - This Colab as_of still **2026-08-03** → splice day **14**. Not a copy of `2026-08-03_rp_ls_winsor_escalation_143601`.
+  - Not locked. Do not edit generic Combined / `reference/` / `DECISIONS.md`.
+  - **Open:** leftover `affid=1` (pre-2026-07-16) is inside App. Combined D1 is mixed; method-compare S=30 is leftover-heavy. Launch floor not applied.
+- Pipeline learning solid. CV workstream parked — `playbook/handoffs/CV_OPTIMIZATION.md`.
+- Generic Colab stays baseline. English only in `marketing_goals/` files.
 
 **Sensible next (priority order)**
 
-1. Run / finish `experiments/cv_optimization/cv_oos_backtest/…Colab.ipynb` → export under `runs/…_cv_oos_backtest_<ts>/`.
-2. Update EXPERIMENT_LOG §6 + README (esp. 1→7 vs mature; CV ~20–30%).
-3. Manager review on winsor (parallel); lock nothing into generic/`DECISIONS.md` until Lee decides.
-4. Optional: Excel parity (08*), Colab vs `reference/` spot-checks.
+1. Continue from `playbook/handoffs/LS_APP.md`. First decision: floor LS App at launch **2026-07-16**?
+2. Do not bump `AS_OF_DATE` alone. Do not run the `.py` unprompted.
+3. App organic stays off until a mature App cohort exists.
+4. July `first_day` winsor_esc improvement and CV OOS stay parked; lock nothing into generic/`DECISIONS.md` until Lee decides.
 
 ---
 

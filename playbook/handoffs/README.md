@@ -18,7 +18,8 @@ When a workstream is done, leave the file as archive or mark it done in the head
 
 | File | Topic | Status |
 |------|--------|--------|
-| `CV_OPTIMIZATION.md` | CV optimization — next stage: `cv_oos_backtest` (does high CV hurt goal reliability?) | **Next chat focus** — updated 2026-08-13 |
+| `LS_APP.md` | LS App bootstrap — `native_early_rp_tail`, organic off | **Next chat focus** — updated 2026-08-18 |
+| `CV_OPTIMIZATION.md` | CV optimization — next stage: `cv_oos_backtest` (does high CV hurt goal reliability?) | Parked / parallel — updated 2026-08-13 |
 
 ## How agents create a new handoff
 

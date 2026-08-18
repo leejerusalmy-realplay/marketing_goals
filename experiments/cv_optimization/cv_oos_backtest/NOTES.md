@@ -41,6 +41,14 @@ If fewer than H mature future dates exist → `insufficient_test_data=True` (no 
 | `CUTOFF_SPAN_DAYS` | 180 |
 | LS `cv_threshold` | **0.175** (production) |
 
+## Local run (agent)
+
+`run_local.py` executes the notebook helpers with the lee_project service account.
+
+- Caches the widened BQ extract under `experiments/cache/cv_oos_backtest_2026-08-03/` (gitignored).
+- Framework only: scores `mean_after` via `patch_cv_adaptive` first pass — does **not** rebuild unused day-step curves. CV / trim / lookback / thresholds unchanged.
+- Progress log: `run_local.log`.
+
 ## Export
 
 `runs/<as_of>_rp_ls_cv_oos_backtest_<HHMMSS>/`

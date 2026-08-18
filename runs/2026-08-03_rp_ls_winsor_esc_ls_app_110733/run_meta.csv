@@ -1,0 +1,2 @@
+run_tag,as_of_date,brands,brand_slug,run_ts,exported_at,main_columns,env,engine,ls_app_winsor,ls_app_organic,ls_blended_includes_app,ls_app_splice_day
+2026-08-03_rp_ls_winsor_esc_ls_app_110733,2026-08-03,"realprize,lonestar",rp_ls,110733,2026-08-18T11:07:33,"brand,population,goal_horizon,day,raw_goal_ratio,organic_share,adjusted_goal_ratio",colab,v2 winsor_esc + lonestar/App native_early_rp_tail,0% locked (no escalation),"off (organic_share=0, adjusted=raw)",False,14

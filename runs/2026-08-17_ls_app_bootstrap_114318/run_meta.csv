@@ -1,0 +1,2 @@
+launch,freeze,obs_end,eval_start,eval_end,goal_horizon,primary,methods,splice_day,run_ts,exported_at,plots
+2026-07-16,2026-08-17,2026-08-17,2026-07-16,2026-08-17,120,shape_to_dstar,native_ls_app;ls_web_donor;rp_app_donor;hybrid_donor;native_early_rp_tail,30,114318,2026-08-18T11:43:18,plot_ls_app_launch_day.png;plot_ls_app_launch_week.png;plot_ls_app_horizon120.png
