@@ -7,10 +7,12 @@ WITH users AS (
     id AS user_id,
     DATE(MIN(cost_date)) AS cost_date,
     CASE
-      WHEN ANY_VALUE(affid) IN (63, 2521, 2535, 4957, 4971, 5048, 5062, 5069) THEN 'Web'
-      WHEN ANY_VALUE(affid) = 1 THEN 'App'
-      WHEN ANY_VALUE(affid) IN (64, 71) THEN 'PPC'
-      WHEN ANY_VALUE(affid) IN (0, 78, 2290) THEN 'Organic'
+      WHEN ANY_VALUE(affid) = 2290 THEN 'Organic'
+      WHEN ANY_VALUE(marketing_population) IN ('SEO', 'Shared Link', 'Organic') THEN 'Organic'
+      WHEN ANY_VALUE(marketing_population) = 'WEB' THEN 'Web'
+      WHEN ANY_VALUE(channel_type) = 'app_affiliate' THEN 'Affiliate'
+      WHEN ANY_VALUE(marketing_population) = 'APP' THEN 'App'
+      WHEN ANY_VALUE(marketing_population) IN ('Google PPC', 'Bing PPC', 'PPC') THEN 'PPC'
       ELSE 'Affiliate'
     END AS population
   FROM `analytics.realprize_cost_per_user`

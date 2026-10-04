@@ -4,6 +4,47 @@ Dated locks for this project. Newest first. Every lock notes which brand(s) it a
 
 *(Full pipeline Excel-lock still partial. Knobs mirror `config/realprize.yaml` + `config/lonestar.yaml` + notebook `BRAND_CONFIGS`.)*
 
+## 2026-08-24 — Looker Goals view uses Combined v4 mapping; day cap 120
+
+- **Brands:** RP + LS.
+- **Decision:** `realplay_goals_performance` users SQL matches Combined v4 (app_affiliate, 2290, TikTok excludes, LS App floor, PPC/Organic in Blended only). Deposits `dsi ≥ 0`. Life days and patches stop at 120. Patch is a dimension, not a Parameter 1–5 value. Lee uploads the v4 goals table herself.
+- **Where:** `marketing_context/dashboards/marketing_goals_120/`
+
+## 2026-08-24 — Current Combined freeze is v4 (RP `app_affiliate` → Affiliate)
+
+- **Brands:** RP only for the new rule. LS unchanged.
+- **Decision:** Promote the RP `app_affiliate` experiment to Combined freeze **v4**. Folder: `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`. Matching export: `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`.
+- **RP:** `channel_type = app_affiliate` → Affiliate (`non_app` / `acquired`). Remaining `APP` stays App.
+- **LS:** same as v3 (`APP` and `cost_date >= 2026-08-05` → App).
+- Rest of the engine is v3 (winsor_esc, LS App `native_early_rp_tail`, App organic off, `AS_OF_DATE` 2026-08-19).
+- v3 stays archived. Generic `notebooks/` Combined stay the no-App baseline. Not a YAML lock.
+- Working copy: `experiments/rp_app_affiliate_to_aff/`
+- Topic: `playbook/handoffs/RP_APP_AFFILIATE.md`
+
+## 2026-08-20 — Population from `marketing_population` (not hardcoded affid lists)
+
+- **Brands:** RP + LS.
+- **Decision:** Combined users SQL reads `marketing_population` on `*_cost_per_user` (same map as `analytics.stg_channel_affid_mapping`). Hardcoded Web / PPC / Organic affid lists are retired.
+- **Label map (CMO → Goals):** `WEB` → Web, `APP` → App, `Google PPC` / `Bing PPC` / `PPC` → PPC, `Organic` → Organic, else Affiliate (Influencers, Test, Cost Adjustments, unmatched).
+- **Exceptions:** `SEO` → Organic; `Shared Link` (affid 78) → Organic; **RP only** `affid = 2290` → Organic (map says Affiliate / internal yogev).
+- **Still excluded:** TikTok WEB affids (RP `4313`; LS `4866`, `7127`) via `exclude_affids`.
+- **LS App floor unchanged:** `marketing_population = 'APP'` counts as App only when `cost_date >= 2026-08-05`; earlier APP → Affiliate. v2 (no App) still maps APP → Affiliate.
+- **Where:** v2 + v3 + v4 Colabs, `experiments/` working copies, `config/*.yaml`, `playbook/sql_steps/01*.sql`. Generic `notebooks/` Combined not updated.
+- **v4 add-on (2026-08-24):** RP `channel_type = app_affiliate` → Affiliate. See decision above.
+
+## 2026-08-19 — Current Combined freeze is v3 (replaced)
+
+- **Brands:** RP + LS.
+- **Decision:** Replace `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` with the working LS App Colab. That folder is Lee’s **current Combined freeze**. Matching export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`.
+- **In this freeze (still provisional vs generic Combined / YAML):**
+  - LS App start `2026-08-05`; pre-floor `affid=1` → Affiliate
+  - LS App `min_cohort_dates = 1`; Web / Aff / Blended stay 20
+  - `native_early_rp_tail`; App winsor 0%; App organic off
+  - CV concat keeps App rows only from the App pass (Blended once)
+- Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` stay the no-App baseline.
+- Working copy: `experiments/ls_app_bootstrap/Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb`
+- Topic: `playbook/handoffs/LS_APP.md`
+
 ## 2026-08-06 — Every playbook file dual-brand (RP + LS)
 
 - Playbook docs rewrite: each file states **shared machinery** and **brand config differences**.

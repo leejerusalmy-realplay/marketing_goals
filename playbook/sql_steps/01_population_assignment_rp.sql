@@ -1,36 +1,56 @@
 -- Step 01 — RealPrize: population + first cost_date (Excel check)
 -- What this proves: each user gets one population label and one cohort date
---   from analytics.realprize_cost_per_user, matching the Combined notebook mapping.
+--   from analytics.realprize_cost_per_user, matching Combined v4 (2026-08-24).
+-- Population from marketing_population (stg_channel_affid_mapping).
+-- Exceptions: SEO / Shared Link → Organic; affid 2290 → Organic.
+-- v4: channel_type = app_affiliate → Affiliate (non_app / acquired).
 -- Cost note: narrow recent window only. Widen after you trust the mapping.
 
 -- Knobs (edit if needed)
 -- Window: last 14 days of cost_date (cheap check)
 
-WITH mapped AS (
+WITH base AS (
   SELECT
     id AS user_id,
     affid,
     channel_type,
-    DATE(cost_date) AS cost_date,
-    CASE
-      WHEN affid IN (63, 2521, 2535, 4957, 4971, 5048, 5062, 5069) THEN 'Web'
-      WHEN affid = 1 THEN 'App'
-      WHEN affid IN (64, 71) THEN 'PPC'
-      WHEN affid IN (0, 78, 2290) THEN 'Organic'
-      ELSE 'Affiliate'
-    END AS population,
-    -- Used later for organic share (App organic vs acquired)
-    CASE WHEN affid = 1 THEN 'app' ELSE 'non_app' END AS scope,
-    CASE
-      WHEN affid = 1 AND channel_type = 'app_organic' THEN 'organic'
-      WHEN affid = 1 THEN 'acquired'
-      WHEN affid IN (0, 78, 2290) THEN 'organic'
-      ELSE 'acquired'
-    END AS bucket
+    marketing_population,
+    DATE(MIN(cost_date)) AS cost_date
   FROM `analytics.realprize_cost_per_user`
   WHERE cost_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)
-    AND affid != 4313   -- TikTok excluded in predecessor
+    AND affid != 4313   -- TikTok WEB excluded
     AND id > 0
+  GROUP BY id, affid, channel_type, marketing_population
+),
+
+mapped AS (
+  SELECT
+    user_id,
+    affid,
+    cost_date,
+    CASE
+      WHEN affid = 2290 THEN 'Organic'
+      WHEN marketing_population IN ('SEO', 'Shared Link', 'Organic') THEN 'Organic'
+      WHEN marketing_population = 'WEB' THEN 'Web'
+      WHEN channel_type = 'app_affiliate' THEN 'Affiliate'
+      WHEN marketing_population = 'APP' THEN 'App'
+      WHEN marketing_population IN ('Google PPC', 'Bing PPC', 'PPC') THEN 'PPC'
+      ELSE 'Affiliate'
+    END AS population,
+    CASE
+      WHEN channel_type = 'app_affiliate' THEN 'non_app'
+      WHEN marketing_population = 'APP' THEN 'app'
+      ELSE 'non_app'
+    END AS scope,
+    CASE
+      WHEN channel_type = 'app_affiliate' THEN 'acquired'
+      WHEN marketing_population = 'APP' AND channel_type = 'app_organic' THEN 'organic'
+      WHEN marketing_population = 'APP' THEN 'acquired'
+      WHEN affid = 2290 THEN 'organic'
+      WHEN marketing_population IN ('SEO', 'Shared Link', 'Organic') THEN 'organic'
+      ELSE 'acquired'
+    END AS bucket
+  FROM base
 ),
 
 -- One row per user: earliest cost_date in this window (cohort date)

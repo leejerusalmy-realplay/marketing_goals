@@ -23,14 +23,14 @@ CREDS = PROJECT_ROOT / "oceanic-citadel-454608-d2-e116e15558ce.json"
 CSV = (
     MG_ROOT
     / "runs"
-    / "2026-08-03_rp_ls_winsor_esc_ls_app_110733"
+    / "2026-08-19_rp_ls_winsor_esc_ls_app_074309"
     / "combined_goals.csv"
 )
 PROJECT = "oceanic-citadel-454608-d2"
 DATASET = "analytics_team"
 TABLE = "combined_goals_draft"
-AS_OF = "2026-08-03"
-RUN_TAG = "2026-08-03_rp_ls_winsor_esc_ls_app_110733"
+AS_OF = "2026-08-19"
+RUN_TAG = "2026-08-19_rp_ls_winsor_esc_ls_app_074309"
 ENGINE = "v2 winsor_esc + lonestar/App native_early_rp_tail"
 MAIN_COLS = [
     "brand",

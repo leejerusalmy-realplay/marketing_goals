@@ -5,13 +5,13 @@
 One SQL file per calculation idea. Naming: `NN_short_name.sql`.
 
 **Shared math:** same formulas for both brands (dsi rule, winsor definition, patch growth, goals).  
-**Brand config differs:** tables, affid lists, winsor %, CV flags, min_cohort_dates, organic scope — see `CONFIG_AND_KNOBS.md` and `METHODOLOGY.md`.
+**Brand config differs:** tables, TikTok exclude lists, winsor %, CV flags, min_cohort_dates, organic scope — see `CONFIG_AND_KNOBS.md` and `METHODOLOGY.md`. Population labels come from `marketing_population` (2026-08-20). **v4:** RP `channel_type = app_affiliate` → Affiliate.
 
-Most early steps are **RealPrize fixtures** (cheaper first lock). To port a check to LoneStar: swap tables + affid filters + knobs (do **not** change day/dsi math).
+Most early steps are **RealPrize fixtures** (cheaper first lock). To port a check to LoneStar: swap tables + TikTok exclude + knobs (do **not** change day/dsi math). Web filter = `marketing_population = 'WEB'`.
 
 | Step | File | Brand focus | What you check |
 |------|------|-------------|----------------|
-| 01 | `01_population_assignment_rp.sql` | RP (port to LS: affid map) | Population counts |
+| 01 | `01_population_assignment_rp.sql` | RP (port to LS: same column, no 2290 exception) | Population counts |
 | 01b | `01b_population_sample_users_rp.sql` | RP | Sample users + scope/bucket |
 | 01c | `01c_id_uniqueness_check_rp.sql` | RP | id>0 uniqueness |
 | 02 | `02_dsi_cumulative_revenue_sample_rp.sql` | RP (math shared) | dsi + cum |
@@ -36,7 +36,7 @@ Each file: runnable alone in BigQuery → Excel → verify before next step.
 |--------|---------|
 | Cost / deposit tables | lonestar.* |
 | Exclude affids | 4866, 7127 |
-| Web affids | LS list in `CONFIG_AND_KNOBS` / yaml |
+| Web | `marketing_population = 'WEB'` (same column) |
 | Web winsor | **off (0%)** — 08d style not used for LS Web |
 | Organic | no scope/bucket SQL; one share for Web/Aff |
 | min_cohort_dates | **20** (behavioral; rarely appears in single-date toys) |

@@ -45,18 +45,19 @@ brand → population → cum/DSI → ARPU per patch → winsor → growth → CV
 | Cost table | `analytics.realprize_cost_per_user` | `analytics.lonestar_cost_per_user` |
 | Deposits | `realprize.casino_astropay_dmn` | `lonestar.casino_astropay_dmn` |
 | Exclude affids | **4313** (TikTok) | **4866, 7127** |
-| Curve populations | Web, **App**, Affiliate + Blended | Web, Affiliate + Blended (**no App** yet) |
+| Curve populations | Web, **App**, Affiliate + Blended | Generic Combined: Web, Affiliate + Blended. **Current v4 freeze:** also **App** (add-on) |
 | Web winsor | **1%** | **0%** (off) |
-| App winsor | **0%** | n/a |
+| App winsor | **0%** | n/a in generic Combined; **0%** (locked) in v4 freeze |
 | Affiliate winsor | **1%** | **1%** |
 | Blended winsor | **0%** | **0%** |
 | CV flag line | **0.15** | **0.175** |
-| min_cohort_dates | **1** | **20** |
+| min_cohort_dates | **1** | **20** (v4 freeze: LS App **1**, others 20) |
 | Organic share cap | pin at horizon **120** | **None** |
-| Tail extrapolate | **No** | **Yes** (~30 day-steps) |
-| Users SQL scope/bucket | **Yes** (app / non_app) | **No** → organic `scope=all` |
+| Tail extrapolate | **No** | **Yes** (~30 day-steps); v3 LS App uses RP App growth after last measured day |
+| Users SQL scope/bucket | **Yes** (app / non_app) | Generic Combined: **No** → organic `scope=all`. **v4 freeze:** yes (same idea as RP); LS App organic forced off |
 
-Full detail: `CONFIG_AND_KNOBS.md`.
+**Current Combined freeze (v4, 2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`.  
+v3 engine + RP `app_affiliate` → Affiliate. LS App start `2026-08-05`; pre-floor `affid=1` → Affiliate; matching export `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`. Generic `notebooks/` Combined still has no LS App. Full detail: `CONFIG_AND_KNOBS.md` + `playbook/handoffs/RP_APP_AFFILIATE.md`.
 
 ---
 
@@ -73,51 +74,46 @@ Same recipe; only tables, affid lists, and knobs change (table above).
 ### What happens (both)
 
 1. Pull users from that brand’s `*_cost_per_user` table.
-2. Map each row’s `affid` → a population label.
+2. Map `marketing_population` → a Goals population label (exceptions: SEO, Shared Link, RP 2290).
 3. One row per user: `MIN(cost_date)` = **cohort date** (the clock for all later ARPU).  
    **Not** registration date (`dateReg`).
 
-### RealPrize affid → label (simplified)
+### RealPrize / LoneStar — `marketing_population` → Goals label (2026-08-20)
 
-| Population | Affids (representative) | Own ARPU curve? | Goals? |
-|------------|-------------------------|-----------------|--------|
-| **Web** | 63, 2521, 2535, 4957, 4971, 5048, 5062, 5069 | Yes | Yes |
-| **App** | 1 | Yes | Yes |
-| **Affiliate** | everything else not listed elsewhere | Yes | Yes |
-| **PPC** | 64, 71 | No | Blended + organic *acquired* |
-| **Organic** | 0, 78, 2290 | No | Organic share *organic* + Blended |
-| **Blended** | all together | Yes | Yes, **no** organic haircut |
+Source column: `*_cost_per_user.marketing_population` (from `stg_channel_affid_mapping`). TikTok WEB affids still dropped (`exclude_affids`).
 
-RP also assigns `scope` (app if affid=1 else non_app) and `bucket` (organic/acquired) for organic share.
+| Goals population | When | Own ARPU curve? | Goals? |
+|------------------|------|-----------------|--------|
+| **Web** | `WEB` | Yes | Yes |
+| **App** | `APP` except RP `channel_type = app_affiliate` (LS v4: only if `cost_date >= 2026-08-05`) | Yes | Yes (LS App organic off) |
+| **PPC** | `Google PPC`, `Bing PPC`, `PPC` | No | Blended + organic *acquired* |
+| **Organic** | `Organic`, plus **SEO**, **Shared Link**, and **RP `affid = 2290`** | No | Organic share *organic* + Blended |
+| **Affiliate** | `Affiliate` and everything else (Influencers, Test, Cost Adjustments, unmatched, pre-floor LS `APP`, **RP `app_affiliate`**) | Yes | Yes |
+| **Blended** | all mapped users in one curve | Yes | Yes, **no** organic haircut |
 
-### LoneStar affid → label
+RP / v4 LS also assign `scope` (`app` if Goals App else `non_app`) and `bucket` (organic if Goals Organic, or App + `channel_type = app_organic`). RP `app_affiliate` is Affiliate / `non_app` / `acquired`.
 
-| Population | Affids | Own ARPU curve? | Goals? |
-|------------|--------|-----------------|--------|
-| **Web** | 63, 4432, 4551, 4698, 5048, 5125, 7120, 7253, 7260, 8331, 8345 | Yes | Yes |
-| **Affiliate** | everything else (not listed below) | Yes | Yes |
-| **PPC** | 64, 71 | No | Only via Blended + organic *acquired* |
-| **Organic** | 0, 78 | No | Only via organic-share *organic* + Blended |
-| **App** | 1 (commented out) | Not live | — |
-| **Blended** | all of the above together | Yes (separate curve) | Yes, **no** organic haircut |
+**v4 freeze:** RP `app_affiliate` → Affiliate. Earlier LS `APP` (before 2026-08-05) → **Affiliate**. Generic Combined / v2 still have no LS App (`APP` → Affiliate).
 
 ### Scope / bucket (organic later) — plain language
 
 “User structure” here means **what columns the users SQL returns**, not casino DB tables.
 
-**LS Combined today** does **not** pull `scope` / `bucket` columns. Organic share falls back to:
+**LS Combined (generic `notebooks/`)** does **not** pull `scope` / `bucket` columns. Organic share falls back to:
 
 - `scope = 'all'`
 - `bucket = organic` if population == Organic, else `acquired`
 
-So Web goals and Affiliate goals on LS currently share one organic-share series.
+So Web goals and Affiliate goals on generic LS Combined share one organic-share series (`scope=all`).
+
+**Current v4 freeze** pulls RP-style `scope` / `bucket` on LS. Web/Aff use `non_app`. LS App organic is forced to 0.
 
 **RealPrize** pulls both columns in SQL:
 
-- `scope`: `app` (affid=1) vs `non_app`
-- `bucket`: organic vs acquired (App organic = affid=1 **and** channel_type app_organic)
+- `scope`: `app` (Goals App) vs `non_app` (`app_affiliate` is `non_app`)
+- `bucket`: organic vs acquired (App organic = Goals App **and** channel_type app_organic; also Goals Organic including SEO / Shared Link / RP 2290). RP `app_affiliate` is `acquired`.
 
-Your chart’s **app / non_app** split is the **RP design** (and future LS once App is live). Until then LS Combined = `scope=all`.
+Your chart’s **app / non_app** split is the **RP design** and the **v4 LS App freeze**. Generic LS Combined still uses `scope=all`.
 
 Full map: `CONFIG_AND_KNOBS.md` § User structure.
 When App is live (RP-style):
@@ -139,7 +135,7 @@ When App is live (RP-style):
 - PPC / Organic: **no own goal curves**.
 - Blended: everyone in one curve.
 - Cohort clock: **cost_date**.
-- RP: full scope/bucket columns; LS: organic share uses `scope=all` until App lands.
+- RP: full scope/bucket columns; generic LS: organic share uses `scope=all`. **v4 freeze:** LS has scope/bucket; App organic off. RP `app_affiliate` is Affiliate.
 
 ---
 
@@ -636,7 +632,7 @@ That one share is reused for **every day** inside the 30-day goal (day 1 and day
 
 | Bucket | LS (today) | RP / future App-style |
 |--------|------------|------------------------|
-| organic | population = Organic (affid 0, 78) | + App with `channel_type = app_organic` |
+| organic | Goals Organic (`Organic` + SEO + Shared Link; RP also affid 2290) | + App with `channel_type = app_organic` |
 | acquired | everyone else in scope (Web, Aff, PPC, …) | same idea |
 
 PPC counts as **acquired**. Organic population as **organic**.

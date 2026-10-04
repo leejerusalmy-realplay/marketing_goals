@@ -28,7 +28,7 @@
 | Organic pin @ 120 | yes (if horizon long) | no |
 | Tail extrapolate | no | yes if curve short |
 | Exclude affid | 4313 | 4866, 7127 |
-| Web affids | 63, 2521, 2535, 4957, 4971, 5048, 5062, 5069 | LS web list (see CONFIG) |
+| Web definition | `marketing_population = 'WEB'` (TikTok 4313 excluded) | LS: same column |
 
 ---
 
@@ -61,9 +61,9 @@ From `analytics.realprize_cost_per_user` + `realprize.casino_astropay_dmn`:
 | Deposits | `Status = 'APPROVED'`, amount `/100` = USD | Revenue definition |
 | dsi | deposit on/after cost_date only (`dsi ≥ 0`) | No pre-cost deposits in ARPU |
 
-**Web affid list:** 63, 2521, 2535, 4957, 4971, 5048, 5062, 5069.
+**Web:** `marketing_population = 'WEB'` on `realprize_cost_per_user`, TikTok affid `4313` excluded.
 
-Only users with those affids go into the **Web** curve.  
+Only those users go into the **Web** curve.  
 PPC / Organic are **not** in the Web curve (they appear later in organic share / Blended).
 
 ---
@@ -304,7 +304,7 @@ From the curve:
 ## 10. End-to-end checklist (what happened where)
 
 ```text
-FILTERS: id>0, not TikTok, Web affid, approved deposits, dsi≥0
+FILTERS: id>0, not TikTok, marketing_population=WEB, approved deposits, dsi≥0
     ↓
 CUM $ by user by dsi
     ↓

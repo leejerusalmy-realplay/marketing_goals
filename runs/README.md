@@ -46,4 +46,10 @@ Prefer an `experiment_tag` in the folder name (not bare `_HHMMSS`) so Drive stay
 
 ## Which folder is "latest"?
 
-Sort by folder name or by `run_meta.exported_at`. Say **"check the latest run"** in chat and the agent will pick the newest under `runs/`.
+**Current Combined freeze export:** `2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`  
+(v4 — RP `app_affiliate` → Affiliate.)
+
+Previous v3 pack: `2026-08-19_rp_ls_winsor_esc_ls_app_074309/` (later v3-mapping re-run: `…105632/`).  
+Old mixed LS App pack: `2026-08-03_rp_ls_winsor_esc_ls_app_110733/` — leftover `affid=1` in App.
+
+Otherwise sort by folder name or by `run_meta.exported_at`. Say **"check the latest run"** in chat and the agent will pick the newest under `runs/`.

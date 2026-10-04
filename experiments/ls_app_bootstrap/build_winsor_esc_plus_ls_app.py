@@ -239,8 +239,11 @@ def main() -> int:
     curve_df = pd.concat([rp_curve, ls_curve, app_curve], ignore_index=True)
 
     organic_df = pd.concat([rp_res["organic"], ls_core["organic"]], ignore_index=True)
+    ls_app_cv = ls_app_native["cv"]
+    if not ls_app_cv.empty and "population" in ls_app_cv.columns:
+        ls_app_cv = ls_app_cv.loc[ls_app_cv["population"] == "App"].copy()
     cv_df = pd.concat(
-        [rp_res["cv"], ls_core["cv"], ls_app_native["cv"]], ignore_index=True
+        [rp_res["cv"], ls_core["cv"], ls_app_cv], ignore_index=True
     )
     if not cv_df.empty:
         cv_df = stamp_source(cv_df, "winsor_esc")

@@ -19,11 +19,13 @@ Open in Colab → Runtime → Run all. Python twin `build_winsor_esc_plus_ls_app
 
 - Base: archived v2 winsor_esc Combined, with `pct_used` wired.
 - RP all pops + LS Web / Affiliate / Blended: capped winsor_esc.
-- LS App: `affid=1` → App; winsor locked at **0%**; then `native_early_rp_tail`.
+- LS App: `marketing_population = APP` and `cost_date >= 2026-08-05` → App (earlier APP stays Affiliate); winsor locked at **0%**; App `min_cohort_dates = 1` (temporary); then `native_early_rp_tail`.
 - LS Blended stays Web+Affiliate only.
 - LS App organic **off** (`organic_share = 0`).
 
-Latest Combined export: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`
+v3 Combined export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`  
+Current Combined freeze is **v4** (same LS App method): `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`  
+(old mixed leftover pack: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`)
 
 ## Method compare
 
@@ -37,11 +39,11 @@ Main verdict: `method_summary.csv` (lower `shape_mae` wins per slice).
 
 Provisional H=120 candidate: **`native_early_rp_tail`**. Native-to-120 explodes (~$6,855). Not locked.
 
-**Open:** leftover `affid=1` (pre-launch) sits inside App. Excel SQL: `sql/01_leftover_affid1_vs_app.sql`. Do not bump `AS_OF_DATE` until a launch floor is decided.
+**Open (history):** leftover `affid=1` used to sit inside App. Current freeze floors App at **2026-08-05**; earlier `affid=1` is Affiliate. Excel SQL: `sql/01_leftover_affid1_vs_app.sql`.
 
 ## Do not
 
-- Move this into generic `notebooks/` or `DECISIONS.md` until Lee locks
+- Move this into generic `notebooks/` until Lee asks
 - Fold App into LS Blended
 - Apply winsor escalation on LS App
 - Use LS tail extrapolation on App

@@ -7,12 +7,16 @@
 - Launch: **2026-07-16**
 - Experiment home: `experiments/ls_app_bootstrap/`
 - Combined Colab (working copy): `Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb`
-- Frozen archive: `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
+- Frozen archive (v3, 2026-08-19): `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
+- Matching v3 export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`
+- **Current Combined freeze is v4** (same LS App method + RP `app_affiliate` carve-out): `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
 - Python twin (do not run unprompted): `build_winsor_esc_plus_ls_app.py`
 - Method compare: `run_ls_app_bootstrap.py`
 - Topic handoff: `playbook/handoffs/LS_APP.md`
 
-Provisional — not locked into generic Combined or `DECISIONS.md`.
+Provisional — LS App method is in Combined freeze v4 (2026-08-24). Not copied into generic Combined or YAML.
+
+**2026-08-20 population:** users SQL uses `marketing_population` on `*_cost_per_user`. SEO + Shared Link → Organic; RP `2290` → Organic; TikTok WEB still excluded. LS App is still `APP` and `cost_date >= 2026-08-05`.
 
 ---
 
@@ -20,7 +24,7 @@ Provisional — not locked into generic Combined or `DECISIONS.md`.
 
 Same Combined boxes through last **measured** history, then a different tail.
 
-1. Map `affid = 1` → population **App**.
+1. Map `marketing_population = APP` **and** `cost_date >= 2026-08-05` → population **App**. Earlier APP stays Affiliate.
 2. Cum deposits / dsi / ARPU per patch — same as Combined.
 3. Winsor floor **0%** and stays 0% — **no winsor_escalation** on LS App.
 4. Growth + CV + day-steps on measured patches only.
@@ -34,9 +38,9 @@ Same Combined boxes through last **measured** history, then a different tail.
 9. **Organic off for now:** `organic_share = 0` so `adjusted = raw`.
 10. **LS Blended stays Web + Affiliate only.** App is an add-on, not folded in.
 
-S is the last patch that actually ran. LS skips a patch if cohort dates &lt; **20** (`min_cohort_dates`).  
-S moves later when `AS_OF_DATE` moves and more App cohorts have lived the patch end-day.  
-One more month of data → expect **S = 30**, not 60. S = 60 needs ~early October.
+S is the last patch that actually ran. LS **Web / Affiliate / Blended** skip a patch if cohort dates &lt; **20**.  
+**LS App only (this experiment):** `min_cohort_dates = 1` so the short post-5/8 window can run. Not locked for production.  
+S moves later when `AS_OF_DATE` moves and more App cohorts have lived the patch end-day.
 
 RP-style `scope` / `bucket` (`app` vs `non_app`, `app_organic`) is in the users SQL for later. Do **not** apply App organic yet (see below).
 
@@ -79,9 +83,23 @@ Splice on that compare run: after **day 30**.
 
 ---
 
-## Combined Colab run (2026-08-18)
+## Combined Colab run (current freeze — 2026-08-19)
 
-Export: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`
+Export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`  
+Freeze: `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
+
+- App start **2026-08-05**; pre-floor `affid=1` → Affiliate; App `min_cohort_dates = 1`
+- `AS_OF_DATE` pinned **2026-08-19** → splice after day **14**
+- LS App: 1→7 = 8 dates / 8,020 users; 7→14 = **1 date** (5 Aug) / 1,004 users
+- D1 **$3.95** → D14 **$23.13** → D120 **$64.07**
+- App organic 0. CV Blended once (App-pass extra rows dropped)
+
+---
+
+## Combined Colab run (2026-08-18 — old mixed pack)
+
+Export: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`  
+Do **not** treat as current. Leftover `affid=1` inside App, no floor.
 
 Base engine: v2 winsor_esc Colab (`notebooks/versions/v2_2026-08_winsor_escalation_combined/`) with `pct_used` wired into the curve.
 
@@ -143,13 +161,26 @@ Raw D1 in that 1→7 window (first-day $, no CV): leftover **$9.07** vs real App
 
 Method-compare splice **S=30** (freeze 2026-08-17) is not 30 days of real App. Patch 14→30 had 1,736 users / 25 dates; **1,095 / 22 dates are leftover**, only 641 users / 3 dates are post-launch.
 
-If App is floored at launch (`cost_date >= 2026-07-16`):
+If App is floored at launch (`cost_date >= 2026-07-16`) **and** LS App still uses the 20-date gate:
 
 - as_of 2026-08-16 (today−2): 1→7 runs (25 dates); 7→14 skips (18); 14→30 skips (2) → **S = 7**
 - S = 14 needs ~20 post-launch dates that have lived 14 days → as_of around **2026-08-18+**
 - S = 30 needs those dates to have lived 30 days → as_of around **2026-09-03**
 
-Not applied yet. Do not bump as_of alone and treat S=30 as native App.
+### Applied 2026-08-19 (Colab working copy — not locked)
+
+Lee chose a later App start than launch day:
+
+- **App start:** `cost_date >= 2026-08-05` (`LS_APP_START_DATE`). Clock is still each user’s `cost_date`.
+- Pre-5/8 `affid = 1` → **Affiliate**, not App. That also moves those users in the LS core load (Affiliate / Blended).
+- **`min_cohort_dates = 1` for LS App only** (Web / Aff / Blended stay 20). Needed because 5/8→as_of has fewer than 20 dates.
+- `AS_OF_DATE` in the working Colab is pinned **2026-08-19**.
+- Python twin `build_winsor_esc_plus_ls_app.py` does **not** have the floor / App gate yet (CV concat filter is in). Frozen v3 archive **matches this Colab** as of 2026-08-19.
+
+This is a methodology change (gate + start date), not only a leftover cut. Current Combined freeze is this Colab. Do not copy into generic Combined / YAML until Lee asks.
+
+Matching export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`  
+LS App D1 **$3.95** → D14 **$23.13** (native) → D120 **$64.07** (RP App tail). Patch 7→14 is one cost_date (5 Aug, 1,004 users). CV export drops the extra Blended rows from the App pass.
 
 ---
 

@@ -12,7 +12,7 @@ How to understand and re-run marketing goals for **both brands** (shared pipelin
 
 | File | Purpose | When you open it |
 |------|---------|------------------|
-| **`HANDOFF.md`** | **Main handoff.** Status, what is locked, next step, working rules. | **Every new agent chat** — first |
+| **`HANDOFF.md`** | **Main handoff.** Status, what is locked, next step, working rules. Current Combined freeze: v4 (RP `app_affiliate` → Affiliate). | **Every new agent chat** — first |
 | **`handoffs/`** | **Topic** handoffs (CV experiment, …). Do not replace the main handoff. | Only when working that topic |
 | **`FOLDER_HYGIENE.md`** | Drive + git hygiene rules | Before creating new folders/files |
 

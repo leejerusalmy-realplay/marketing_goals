@@ -28,19 +28,35 @@ Goal of this file: a new agent can pick up **without** re-deriving the pipeline 
 Continue marketing goals in lee_project/marketing_goals/.
 Read playbook/HANDOFF.md first (agent handoff).
 Pipeline is RP + LS: playbook/PIPELINE_FLOW.md + CONFIG_AND_KNOBS.md.
-Notebooks: Marketing_Goals_Combined_RP_LS*.ipynb.
+Lee’s current Combined freeze is v4 (v3 + RP app_affiliate → Affiliate)
+(notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/), not generic Combined.
 Don’t re-teach locked methodology. Don’t edit reference/.
 ```
 
-**For LS App (as of 2026-08-18):**
+**For LS App (as of 2026-08-19):**
 ```
 Continue marketing goals — LS App bootstrap.
 Read playbook/HANDOFF.md first, then playbook/handoffs/LS_APP.md
 and experiments/ls_app_bootstrap/NOTES.md.
 Don’t re-teach the full pipeline. Don’t edit reference/.
-Don’t lock into generic notebooks/ or DECISIONS.md.
-Lee’s current Combined freeze is v3 winsor_esc + LS App
-(notebooks/versions/v3_2026-08_winsor_esc_ls_app/), not generic Combined.
+Don’t copy into generic notebooks/ until Lee asks.
+Lee’s current Combined freeze is v4 (includes LS App).
+LS App method is unchanged from v3. See playbook/handoffs/LS_APP.md.
+Matching v3 archive export: runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/
+Current pack: notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/
+Matching export: runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/
+```
+
+**For RP `app_affiliate` → Affiliate (as of 2026-08-24):**
+```
+Continue marketing goals — current Combined freeze is v4
+(RP app_affiliate → Affiliate; LS mapping unchanged).
+Read playbook/HANDOFF.md first, then playbook/handoffs/RP_APP_AFFILIATE.md
+and experiments/rp_app_affiliate_to_aff/NOTES.md.
+Don’t re-teach the full pipeline. Don’t edit reference/.
+Don’t edit notebooks/versions/ (archives). Don’t apply the carve-out to LoneStar.
+Don’t copy into generic notebooks/ until Lee asks.
+Matching export: runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/
 ```
 
 **For CV optimization — next stage `cv_oos_backtest` (as of 2026-08-13):**
@@ -91,7 +107,7 @@ Topic-specific agent work goes under `playbook/handoffs/` — not a second main 
 | **Dated locks** | `playbook/DECISIONS.md` |
 | **Excel SQL** | `playbook/sql_steps/` |
 | **Brand YAML** | `config/realprize.yaml`, `config/lonestar.yaml` |
-| **Run notebooks** | `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` (+ local twin) |
+| **Run notebooks** | **Current freeze:** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` (working copy in `experiments/rp_app_affiliate_to_aff/`). Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` = no-App baseline |
 | **Frozen predecessors** | `reference/Marketing_Goals_Combined_*.ipynb` |
 
 Shared flow chart:  
@@ -107,10 +123,12 @@ Shared flow chart:
 - Growth weight = **$ at patch start** (day-steps use prior-day $). Day-1 anchor = **pooled $ / pooled users**.
 - Production trim = **winsor only**. Does **not** drop users — caps $ with `min(cum, cap)`. Cap from day **e**, applied to s/e/day-steps. Cohort_trim = labs only.
 - Trim map: RP Web/Aff **1%**, RP App/Blended **0%**; LS Web/Blended **0%**, LS Aff **1%**.
-- **min_cohort_dates:** RP **1**, LS **20** → else skip patch.
-- Organic: endpoint share for whole horizon; Web/Aff/App yes; Blended **organic = 0**. RP scope app/non_app; LS **scope=all**. RP pin share at horizon **120**; LS no pin.
+- **min_cohort_dates:** RP **1**, LS Web/Aff/Blended **20** → else skip patch. **Current v4 freeze:** LS App **1** (temporary).
+- Population from `cost_per_user.marketing_population` (WEB→Web, APP→App, PPC family→PPC, Organic→Organic, else Affiliate). Exceptions: SEO + Shared Link → Organic; RP `2290` → Organic. **v4:** RP `channel_type = app_affiliate` → Affiliate. TikTok WEB still excluded.
+- Organic: endpoint share for whole horizon; Web/Aff/App yes; Blended **organic = 0**. RP scope app/non_app; generic LS Combined **scope=all**. **Current v4 freeze:** LS users SQL has RP-style scope/bucket; LS App organic forced **off**. RP pin share at horizon **120**; LS no pin.
 - Goals: `raw = ARPU(d)/ARPU(H)`, `adjusted = raw × (1 − organic)` (Blended = raw). Columns locked: brand, population, goal_horizon, day, raw_goal_ratio, organic_share, adjusted_goal_ratio.
-- LS can **extrapolate curve tail** to 365 (`is_extrapolated`); RP does not.
+- LS App (v4, same as v3): `marketing_population = APP` and `cost_date >= 2026-08-05` → App; earlier APP → Affiliate. Native through last measured day, then RP App day-growth. App organic off.
+- LS Web/Aff/Blended can **extrapolate curve tail** to 365 (`is_extrapolated`); RP does not. v4 LS App does **not** use LS tail fill.
 - Config: notebook `BRAND_CONFIGS` (+ YAML mirror, not runtime-loaded). `apply_brand_globals` per brand.
 
 ---
@@ -129,18 +147,44 @@ Shared flow chart:
 
 ## Rebuild: unified Colab (RP + LS)
 
-- **Colab:** `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb`
-- **Local twin:** `notebooks/Marketing_Goals_Combined_RP_LS.ipynb`
-- **Sample run CSVs:** `runs/2026-08-03_rp_ls_baseline/`
+- **Current freeze (Lee, 2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
+- **Working Colab:** `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb`
+- **Previous freeze (v3):** `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
+- **Generic baseline (no LS App):** `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` + local twin
+- **Sample generic run CSVs:** `runs/2026-08-03_rp_ls_baseline/`
+- **Current freeze export:** `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`
 
-Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `src/` later.
+Still open vs generic Combined: parity vs `reference/` spot-checks; Excel-lock 07; pure `src/` later.
 
 ---
 
 ## Status / next steps (update when session ends)
 
-**As of 2026-08-18**
+**As of 2026-08-24**
 
+- **Current Combined freeze is v4:** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
+  - RP: `channel_type = app_affiliate` → Affiliate; remaining APP stays App
+  - LS mapping unchanged from v3
+  - Matching export: `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`
+  - Compared to last v3-mapping run `…105632/`: RP App H120 adj 0.794→0.715; RP Aff/Web 0.398→0.466; Blended almost flat
+  - Working copy: `experiments/rp_app_affiliate_to_aff/`
+  - Topic: `playbook/handoffs/RP_APP_AFFILIATE.md`
+  - Not copied into generic `notebooks/` or YAML.
+  - **Looker** `realplay_goals_performance` now uses this v4 user mapping (Lee uploading the v4 goals table separately).
+
+**As of 2026-08-20**
+
+- **Population mapping (Lee lock):** Combined v2 + v3 (and `experiments/ls_app_bootstrap/` Colabs) use `marketing_population` on `*_cost_per_user`, not hardcoded Web/PPC/Organic affid lists. Exceptions: SEO + Shared Link → Organic; RP `2290` → Organic. TikTok WEB still excluded. Generic `notebooks/` Combined still has the old affid lists until Lee asks.
+- **Current Combined freeze** is still v3 code + export `…074309/` for the *run*. Re-run Colab before treating a new export as current — mapping change is in the notebooks, not yet a new `runs/` folder.
+
+- **Current Combined freeze:** `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` **replaced** with the working LS App Colab (same code as `experiments/ls_app_bootstrap/Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb`).
+  - Matching export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`
+  - App start **2026-08-05**; pre-floor `affid=1` → Affiliate; LS App `min_cohort_dates = 1`; Web/Aff/Blended stay 20
+  - `native_early_rp_tail`; App winsor 0%; App organic off; splice after day **14**
+  - CV export keeps App rows from the App pass only (LS Blended once)
+  - `AS_OF_DATE` pinned **2026-08-19**
+  - Provisional. Generic `notebooks/` stay no-App baseline. Not copied into YAML.
+- **Old mixed App pack (keep):** `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/` — leftover `affid=1` inside App, no floor, as_of 2026-08-03. Do not treat as current.
 - **April freeze (done):** Combined as of 2026-04-10 vs Apr 10–14 actuals.
   - Production: `runs/2026-04-10_rp_ls_goal120_realized_133457/`
   - Capped winsor_esc: `runs/2026-04-10_rp_ls_goal120_realized_winsor_esc_073346/`
@@ -167,29 +211,21 @@ Still open: parity vs `reference/` Combined spot-checks; Excel-lock 07; pure `sr
 - **Winsor notebook freeze (2026-08-18):**
   - Archived capped `winsor_escalation` Colab notebook under
     `notebooks/versions/v2_2026-08_winsor_escalation_combined/`.
-  - Generic `notebooks/` remain baseline.
-- **v3 LS App freeze (2026-08-18):**
-  - `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
-  - v2 winsor_esc plus LS App (`native_early_rp_tail`). Provisional, not a lock.
-- **LS App (2026-08-18) — next chat focus:** `playbook/handoffs/LS_APP.md`
-  - Write-up: `experiments/ls_app_bootstrap/NOTES.md`
-  - Colab (working copy): `experiments/ls_app_bootstrap/Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb`
-  - Freeze: `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
-  - Combined export: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`
+- **LS App detail:** `playbook/handoffs/LS_APP.md` + `experiments/ls_app_bootstrap/NOTES.md`
   - Method compare: `runs/2026-08-17_ls_app_bootstrap_114318/`
-  - Provisional method: **`native_early_rp_tail`**. Winsor App 0% (no escalation). Organic **off**. Blended excludes App.
-  - This Colab as_of still **2026-08-03** → splice day **14**. Not a copy of `2026-08-03_rp_ls_winsor_escalation_143601`.
-  - Not locked. Do not edit generic Combined / `reference/` / `DECISIONS.md`.
-  - **Open:** leftover `affid=1` (pre-2026-07-16) is inside App. Combined D1 is mixed; method-compare S=30 is leftover-heavy. Launch floor not applied.
+  - Known: patch 7→14 is one App cost_date (5 Aug, 1,004 users). PART 2 Blended still copies all `users_df` (some App in Blended).
 - Pipeline learning solid. CV workstream parked — `playbook/handoffs/CV_OPTIMIZATION.md`.
-- Generic Colab stays baseline. English only in `marketing_goals/` files.
+- English only in `marketing_goals/` files.
+
+- **LookML Goals 120 dashboard (draft, 2026-08-20):** `lee_project/marketing_context/dashboards/marketing_goals_120/`. One explore, horizon 120, `cost_date` filter. Not deployed to Looker yet.
 
 **Sensible next (priority order)**
 
-1. Continue from `playbook/handoffs/LS_APP.md`. First decision: floor LS App at launch **2026-07-16**?
-2. Do not bump `AS_OF_DATE` alone. Do not run the `.py` unprompted.
-3. App organic stays off until a mature App cohort exists.
-4. July `first_day` winsor_esc improvement and CV OOS stay parked; lock nothing into generic/`DECISIONS.md` until Lee decides.
+1. Treat v4 + `…112133` as the current Combined pack. Do not re-run the heavy Colab unless Lee asks.
+2. App organic stays off until a mature App cohort exists.
+3. Python twin `build_winsor_esc_plus_ls_app.py` still lags the Colab floor — do not run it for this freeze.
+4. July `first_day` winsor_esc improvement and CV OOS stay parked. Do not copy into generic `notebooks/` until Lee asks.
+5. Paste Goals 120 LookML into the Looker project when Lee is ready (`connection` must match the live UA model).
 
 ---
 

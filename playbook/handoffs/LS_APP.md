@@ -4,7 +4,7 @@
 
 **Read after** main `playbook/HANDOFF.md`.  
 **Opened:** 2026-08-18 — LS App launched 2026-07-16; not enough native history for a normal Combined lock.  
-**Last updated:** 2026-08-18 — leftover `affid=1` found; launch floor not applied yet.
+**Last updated:** 2026-08-24 — Combined current freeze is **v4** (LS App method unchanged from v3). App start 2026-08-05; App `min_cohort_dates = 1` (temporary). Provisional vs generic Combined.
 
 ---
 
@@ -15,9 +15,13 @@ Continue marketing goals — LS App bootstrap.
 Read playbook/HANDOFF.md first, then playbook/handoffs/LS_APP.md
 and experiments/ls_app_bootstrap/NOTES.md.
 Don’t re-teach the full pipeline. Don’t edit reference/.
-Don’t lock into generic notebooks/ or DECISIONS.md.
-Lee’s current Combined freeze is v3 winsor_esc + LS App
-(notebooks/versions/v3_2026-08_winsor_esc_ls_app/), not generic Combined.
+Don’t copy into generic notebooks/ until Lee asks.
+Lee’s current Combined freeze is v4 (includes this LS App method).
+LS App method is unchanged from v3. Current pack:
+notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/
+Matching export: runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/
+v3 archive: notebooks/versions/v3_2026-08_winsor_esc_ls_app/
+v3 export: runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/
 ```
 
 ---
@@ -29,22 +33,25 @@ Lee’s current Combined freeze is v3 winsor_esc + LS App
 | **Experiment home** | `experiments/ls_app_bootstrap/` |
 | **How to calculate (write-up)** | `experiments/ls_app_bootstrap/NOTES.md` |
 | **Colab to open** | `experiments/ls_app_bootstrap/Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb` |
-| **Python twin (do not run unprompted)** | `experiments/ls_app_bootstrap/build_winsor_esc_plus_ls_app.py` |
+| **Current Combined freeze** | `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` (LS App method unchanged) |
+| **v3 archive** | `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` (replaced 2026-08-19) |
+| **Python twin (do not run unprompted)** | `experiments/ls_app_bootstrap/build_winsor_esc_plus_ls_app.py` — lags the Colab floor |
 | **Method compare** | `experiments/ls_app_bootstrap/run_ls_app_bootstrap.py` |
 | **Method-compare export** | `runs/2026-08-17_ls_app_bootstrap_114318/` |
-| **Combined export (Colab)** | `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/` |
-| **v3 freeze (this Colab)** | `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` |
+| **Current Combined export** | `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/` |
+| **v3 Combined export** | `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/` |
+| **Old mixed export (keep)** | `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/` |
 | **v2 winsor freeze (no App)** | `notebooks/versions/v2_2026-08_winsor_escalation_combined/` |
 
-Lee treats **v3 winsor_esc + LS App** as her current Combined freeze. Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` stay baseline. v2 stays the no-App winsor archive.
+Lee treats **v3 winsor_esc + LS App** as her current Combined freeze. Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` stay the no-App baseline.
 
 ---
 
-## Provisional method (not locked)
+## Provisional method (current freeze)
 
 **`native_early_rp_tail`**
 
-1. Map `affid = 1` → population App.
+1. Map `marketing_population = APP` **and** `cost_date >= 2026-08-05` → population App. Earlier APP stays Affiliate.
 2. Same Combined boxes through last **measured** patch (cum / dsi / ARPU / winsor / growth / CV / day-steps / D1).
 3. LS App winsor **0%**, **no escalation**.
 4. Keep native curve through last non-extrapolated day **S**.
@@ -54,11 +61,11 @@ Lee treats **v3 winsor_esc + LS App** as her current Combined freeze. Generic `n
 
 6. Goals: `raw = ARPU(d)/ARPU(H)`.
 7. **LS App organic is off** (`organic_share = 0` → `adjusted = raw`).
-8. **LS Blended stays Web + Affiliate only.** App is an add-on.
+8. **LS Blended intent:** Web + Affiliate + PPC + Organic. App is an add-on. PART 2 still copies all `users_df`, so some App users still sit in the Blended curve.
+9. CV concat keeps only `population == App` from the App pipeline pass, so LS Blended CV is not duplicated.
 
-S is dynamic if `AS_OF_DATE` moves. LS skips a patch when cohort dates &lt; **20**.  
-Colab still has `AS_OF_DATE` pinned to **2026-08-03** → this run **S = 14**.  
-A later as_of (~mid-Sep) should unlock S = 30, not 60 yet.
+S is dynamic if `AS_OF_DATE` moves. LS Web / Affiliate / Blended skip a patch when cohort dates &lt; **20**.  
+**LS App:** `min_cohort_dates = 1`. Colab: `LS_APP_START_DATE = 2026-08-05`, `AS_OF_DATE` pinned **2026-08-19**.
 
 ---
 
@@ -82,66 +89,62 @@ Keep native early (better on the first-week wave); dress RP App only after measu
 
 ---
 
-## Latest Combined Colab run
+## Latest Combined Colab run (current freeze)
 
-`runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`
+`runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`
 
-- ~25.8k LS App users; scope/bucket mapped (app acquired 21,467 / app organic 4,326).
-- Winsor stayed 0%. Splice after day **14**. D1 **$6.24** → D14 **$16.97** → D120 **$48.71**.
-- App organic **forced to 0** in the export (H120 was NaN; H30 was a misleading 100%).
-- **Not a copy of** `runs/2026-08-03_rp_ls_winsor_escalation_143601/`:
-  - this Colab **wires `pct_used` into the curve** (143601 still built the curve on floor winsor);
-  - `affid=1` left LS Affiliate.
-  - Close: RP Affiliate / RP Blended / LS Blended **ratios**. Different: RP Web, RP App, LS Web, LS Affiliate.
+- App start 2026-08-05; App `min_cohort_dates = 1`; pre-5/8 `affid=1` → Affiliate
+- LS App: patch 1→7 = 8 dates / 8,020 users; patch 7→14 = **1 date** (5 Aug) / 1,004 users
+- Winsor stayed 0%. Splice after day **14**. D1 **$3.95** → D14 **$23.13** → D120 **$64.07**
+- App organic **0**. LS Web/Aff H120 organic share **33.3%** (`non_app`)
+- CV: LS Blended once (App-pass Blended rows dropped after the run and in the Colab concat)
+
+Old mixed pack (do not use as current): `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`  
+leftover `affid=1` inside App, D1 **$6.24**, as_of 2026-08-03.
 
 ---
 
 ## Organic (parked)
 
 RP-style `scope` / `bucket` is in the LS users SQL (`app` vs `non_app`; `app_organic`).  
-**Do not apply App organic yet.** Too little mature App history:
-
-- H7: a real mix, but ~60% (high vs RP App).
-- H30: 100% organic — window ends before launch; leftover old `affid=1` only, 0 acquired.
-- H120: empty → NaN.
+**Do not apply App organic yet.** Too little mature App history.
 
 Leave `organic_share = 0` on LS App until Lee reopens this.
 
 ---
 
-## Leftover `affid=1` (open)
+## Leftover `affid=1`
 
-Old `affid=1` users (before 2026-07-16) are mapped to App. Detail + Excel SQL: `experiments/ls_app_bootstrap/NOTES.md` and `sql/01_leftover_affid1_vs_app.sql`.
+Old `affid=1` before launch used to sit in App. Detail + Excel SQL: `experiments/ls_app_bootstrap/NOTES.md` and `sql/01_leftover_affid1_vs_app.sql`.
 
-- Combined D1 **$6.24** mixes leftover D1 ~**$9.07** with real App ~**$4.65**.
-- Method-compare **S=30** used 22 leftover dates + 3 real App dates. Not 30 days of App history.
-- A launch floor (`cost_date >= 2026-07-16`) is **not** in the Colab yet.
+**Current freeze:** App start **2026-08-05**. Pre-5/8 `affid = 1` → **Affiliate**. That also moves those users in the LS core load (Affiliate / Blended).
+
+---
 
 ## Do now
 
-1. **Decide launch floor** for LS App (`cost_date >= 2026-07-16`). Recommended: yes, then re-run Colab. Do not bump `AS_OF_DATE` alone.
-2. If floored: S stays **7** on as_of ~2026-08-16; S=14 around **2026-08-18+**; S=30 around **2026-09-03**.
-3. Existing Combined export stays organic = 0. Usable only as a mixed leftover+App draft.
-4. Do not treat this as production until she locks.
+1. Current Combined pack is v4 + `…112133`. LS App method is unchanged. Do not re-run Combined unless Lee asks.
+2. App organic stays off.
+3. Do not copy into generic Combined / YAML until Lee asks.
+4. Do not run the Python twin for this freeze (floor / App gate still lag the Colab).
 
 ## Draft BigQuery table (until BI is back)
 
 Lee can query Combined output without waiting for Looker / dbt.
 
 - Table: `analytics_team.combined_goals_draft` (replace each load)
-- Loaded 2026-08-18 from `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/combined_goals.csv` (13,776 rows)
+- Last loaded 2026-08-18 from `…110733` (mixed pack). Point `upload_combined_goals_bq.py` at `…074309` before the next load.
 - Script: `experiments/ls_app_bootstrap/upload_combined_goals_bq.py`
 - Do **not** overwrite `analytics.stg_*_marketing_goals_blended_daily` (Looker production, different grain)
 
 ## Do not
 
 - Edit `reference/` or generic `notebooks/` Combined.
-- Lock `DECISIONS.md`.
-- Put LS App into LS Blended unless Lee asks.
+- Put LS App into LS Blended on purpose (intent is add-on; PART 2 still copies `users_df`).
 - Apply winsor escalation on LS App.
 - Use native LS extrapolation to 120.
 - Re-run the heavy Combined Colab unless Lee asks.
-- Assume non-App cells match `2026-08-03_rp_ls_winsor_escalation_143601`.
+- Treat `…110733` or `…143601` as the current Combined pack.
 
 ---
 

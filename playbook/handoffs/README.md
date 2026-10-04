@@ -18,7 +18,8 @@ When a workstream is done, leave the file as archive or mark it done in the head
 
 | File | Topic | Status |
 |------|--------|--------|
-| `LS_APP.md` | LS App bootstrap — `native_early_rp_tail`, organic off | **Next chat focus** — updated 2026-08-18 |
+| `LS_APP.md` | LS App bootstrap — `native_early_rp_tail`, organic off | In v4 (method unchanged from v3) |
+| `RP_APP_AFFILIATE.md` | RP `app_affiliate` → Affiliate (LS unchanged) | **Current Combined freeze v4** (2026-08-24) |
 | `CV_OPTIMIZATION.md` | CV optimization — next stage: `cv_oos_backtest` (does high CV hurt goal reliability?) | Parked / parallel — updated 2026-08-13 |
 
 ## How agents create a new handoff

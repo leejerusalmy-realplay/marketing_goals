@@ -23,10 +23,10 @@ How Cursor and Lee share one notebook loop (code → run → outputs → edits �
 
 | Role | File |
 |------|------|
-| Edit with agent | Either twin (mirror logic in both) |
-| Run Colab | `Marketing_Goals_Combined_RP_LS_Colab.ipynb` |
-| Run Cursor | `Marketing_Goals_Combined_RP_LS.ipynb` |
-| Numbers | `runs/<as_of>_*` CSVs — filter by `brand` |
+| **Current Combined freeze** | `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` |
+| Edit / run (v4 Colab) | `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb` |
+| Generic Combined (no LS App) | `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` / local twin |
+| Numbers | `runs/<as_of>_*` CSVs — current freeze export `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/` |
 
 Set `RUN_BRANDS = ['realprize']` or `['lonestar']` for a single-brand debug run.
 

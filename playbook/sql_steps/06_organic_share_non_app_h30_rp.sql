@@ -14,11 +14,17 @@ WITH users AS (
   SELECT
     id AS user_id,
     DATE(MIN(cost_date)) AS cost_date,
-    CASE WHEN affid = 1 THEN 'app' ELSE 'non_app' END AS scope,
     CASE
-      WHEN affid = 1 AND channel_type = 'app_organic' THEN 'organic'
-      WHEN affid = 1 THEN 'acquired'
-      WHEN affid IN (0, 78, 2290) THEN 'organic'
+      WHEN channel_type = 'app_affiliate' THEN 'non_app'
+      WHEN affid = 1 OR marketing_population = 'APP' THEN 'app'
+      ELSE 'non_app'
+    END AS scope,
+    CASE
+      WHEN channel_type = 'app_affiliate' THEN 'acquired'
+      WHEN marketing_population = 'APP' AND channel_type = 'app_organic' THEN 'organic'
+      WHEN marketing_population = 'APP' THEN 'acquired'
+      WHEN affid = 2290 THEN 'organic'
+      WHEN marketing_population IN ('SEO', 'Shared Link', 'Organic') THEN 'organic'
       ELSE 'acquired'  -- Web, Affiliate, PPC
     END AS bucket
   FROM `analytics.realprize_cost_per_user`

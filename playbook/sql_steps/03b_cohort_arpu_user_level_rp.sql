@@ -8,7 +8,7 @@ WITH users AS (
     DATE(MIN(cost_date)) AS cost_date
   FROM `analytics.realprize_cost_per_user`
   WHERE cost_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)
-    AND affid IN (63, 2521, 2535, 4957, 4971, 5048, 5062, 5069)
+    AND marketing_population = 'WEB'
     AND affid != 4313
     AND id > 0
   GROUP BY id

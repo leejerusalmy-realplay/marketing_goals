@@ -27,18 +27,18 @@ Status: coded in unified Combined notebooks; Excel-verify ongoing.
 |------|-----------|----------|
 | Tables | `analytics.realprize_cost_per_user`, `realprize.casino_astropay_dmn` | `analytics.lonestar_cost_per_user`, `lonestar.casino_astropay_dmn` |
 | Drop affids | 4313 | 4866, 7127 |
-| Curve pops | Web, **App**, Affiliate + Blended | Web, Affiliate + Blended (**no App**) |
+| Curve pops | Web, **App**, Affiliate + Blended | Generic: Web, Affiliate + Blended (**no App**). **v4 freeze:** also App |
 | Web winsor | **1%** | **0%** |
-| App / Aff / Blended winsor | 0% / **1%** / 0% | n/a / **1%** / 0% |
+| App / Aff / Blended winsor | 0% / **1%** / 0% | generic: n/a / **1%** / 0%. **v4 freeze:** App **0%** / Aff **1%** / Blended 0% |
 | CV flag after cleanup | **0.15** | **0.175** |
-| min_cohort_dates | **1** | **20** |
-| Organic user shape | scope app/non_app + bucket | scope **all** (no columns) |
+| min_cohort_dates | **1** | **20** (v4 freeze: LS App **1**) |
+| Organic user shape | scope app/non_app + bucket | generic: scope **all**. **v4 freeze:** RP-style scope/bucket; App organic off |
 | Organic pin | horizons **>120** use D120 share | no pin |
 | Curve tail fill | off | on (~30 day-steps) → `is_extrapolated` |
-| Web affid list | 63, 2521, 2535, 4957, 4971, 5048, 5062, 5069 | 63, 4432, 4551, 4698, 5048, 5125, 7120, 7253, 7260, 8331, 8345 |
-| Organic affids | 0, 78, **2290** | 0, 78 |
+| Population source | `cost_per_user.marketing_population` (SEO + Shared Link → Organic; RP `2290` → Organic). **v4:** RP `app_affiliate` → Affiliate | same; App = `APP` and `cost_date >= 2026-08-05` |
 
-Config lives in notebook `BRAND_CONFIGS` (+ `config/realprize.yaml` / `config/lonestar.yaml` mirrors).
+Config lives in notebook `BRAND_CONFIGS` (+ `config/realprize.yaml` / `config/lonestar.yaml` mirrors).  
+**Current Combined freeze:** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` (not the generic `notebooks/` pair).
 
 ---
 

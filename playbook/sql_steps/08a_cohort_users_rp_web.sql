@@ -3,7 +3,7 @@
 --
 -- What to check:
 --   n_users = N used in all denominators below
---   Spot-check ids: Web affid, id > 0, MIN(cost_date) = 2026-06-23
+--   Spot-check ids: marketing_population = WEB, id > 0, MIN(cost_date) = 2026-06-23
 
 WITH user_min_cost AS (
   -- One row per user (after Web / id filters); cost_date = earliest cost day
@@ -12,7 +12,7 @@ WITH user_min_cost AS (
     MIN(DATE(cost_date)) AS cost_date
   FROM `analytics.realprize_cost_per_user`
   WHERE cost_date BETWEEN DATE '2026-06-14' AND DATE '2026-07-03'
-    AND affid IN (63, 2521, 2535, 4957, 4971, 5048, 5062, 5069)  -- Web
+    AND marketing_population = 'WEB'  -- Web
     AND affid != 4313
     AND id > 0
   GROUP BY id

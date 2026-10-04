@@ -1,31 +1,49 @@
 -- Step 01b — RealPrize: sample users for Excel (after 01 summary looks sane)
--- What this proves: you can spot-check affid → population by hand.
+-- What this proves: you can spot-check marketing_population → Goals population by hand.
 -- Export to Excel and verify a few Web / App / PPC / Organic / Affiliate rows.
 
-WITH mapped AS (
+WITH base AS (
   SELECT
     id AS user_id,
     affid,
     channel_type,
-    DATE(cost_date) AS cost_date,
-    CASE
-      WHEN affid IN (63, 2521, 2535, 4957, 4971, 5048, 5062, 5069) THEN 'Web'
-      WHEN affid = 1 THEN 'App'
-      WHEN affid IN (64, 71) THEN 'PPC'
-      WHEN affid IN (0, 78, 2290) THEN 'Organic'
-      ELSE 'Affiliate'
-    END AS population,
-    CASE WHEN affid = 1 THEN 'app' ELSE 'non_app' END AS scope,
-    CASE
-      WHEN affid = 1 AND channel_type = 'app_organic' THEN 'organic'
-      WHEN affid = 1 THEN 'acquired'
-      WHEN affid IN (0, 78, 2290) THEN 'organic'
-      ELSE 'acquired'
-    END AS bucket
+    marketing_population,
+    DATE(MIN(cost_date)) AS cost_date
   FROM `analytics.realprize_cost_per_user`
   WHERE cost_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)
     AND affid != 4313
     AND id > 0
+  GROUP BY id, affid, channel_type, marketing_population
+),
+
+mapped AS (
+  SELECT
+    user_id,
+    affid,
+    cost_date,
+    CASE
+      WHEN affid = 2290 THEN 'Organic'
+      WHEN marketing_population IN ('SEO', 'Shared Link', 'Organic') THEN 'Organic'
+      WHEN marketing_population = 'WEB' THEN 'Web'
+      WHEN channel_type = 'app_affiliate' THEN 'Affiliate'
+      WHEN marketing_population = 'APP' THEN 'App'
+      WHEN marketing_population IN ('Google PPC', 'Bing PPC', 'PPC') THEN 'PPC'
+      ELSE 'Affiliate'
+    END AS population,
+    CASE
+      WHEN channel_type = 'app_affiliate' THEN 'non_app'
+      WHEN marketing_population = 'APP' THEN 'app'
+      ELSE 'non_app'
+    END AS scope,
+    CASE
+      WHEN channel_type = 'app_affiliate' THEN 'acquired'
+      WHEN marketing_population = 'APP' AND channel_type = 'app_organic' THEN 'organic'
+      WHEN marketing_population = 'APP' THEN 'acquired'
+      WHEN affid = 2290 THEN 'organic'
+      WHEN marketing_population IN ('SEO', 'Shared Link', 'Organic') THEN 'organic'
+      ELSE 'acquired'
+    END AS bucket
+  FROM base
 ),
 
 user_cohort AS (

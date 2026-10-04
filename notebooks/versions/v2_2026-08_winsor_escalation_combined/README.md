@@ -15,6 +15,6 @@ Source workstream:
 
 Status:
 - Archived because Lee wants to keep this version.
-- Still experimental / parked for review; not merged into generic `notebooks/`.
+- **2026-08-20:** users SQL now uses `marketing_population` (Lee asked to update this freeze). Still experimental / parked; not merged into generic `notebooks/`.
 
 Do not edit files in this folder — treat as archive.

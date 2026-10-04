@@ -9,8 +9,9 @@ Colab-friendly notebooks for producing goals.
 | **`Marketing_Goals_Combined_RP_LS_Colab.ipynb`** | **Use this in Google Colab** (auth + Drive + downloads) |
 | **`Marketing_Goals_Combined_RP_LS.ipynb`** | Cursor / local (service-account JSON) — same logic |
 
-**Frozen versions** (do not edit; history / rollback): see `versions/README.md`.  
-v3 = winsor_esc + LS App (provisional). Generic Combined at this folder root stays baseline.
+**Current Combined freeze (Lee, 2026-08-24):** `versions/v4_2026-08_rp_app_affiliate_to_aff/`  
+(v3 + RP `app_affiliate` → Affiliate). Working Colab: `../experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb`.  
+Generic Combined at this folder root stays the no-App baseline. Other frozen versions: `versions/README.md`.
 
 **Agent collaboration** (see outputs, edit cells, git versions): `../playbook/NOTEBOOK_INTEGRATION.md`
 

@@ -8,7 +8,7 @@ WITH user_min_cost AS (
     MIN(DATE(cost_date)) AS cost_date
   FROM `analytics.realprize_cost_per_user`
   WHERE cost_date BETWEEN DATE '2026-06-14' AND DATE '2026-07-03'
-    AND affid IN (63, 2521, 2535, 4957, 4971, 5048, 5062, 5069)
+    AND marketing_population = 'WEB'
     AND affid != 4313
     AND id > 0
   GROUP BY id

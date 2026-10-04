@@ -6,8 +6,11 @@
 
 | Notebook | Role |
 |----------|------|
-| `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Colab |
-| `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` | Cursor / local twin |
+| `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` | **Current Combined freeze** (v3 + RP `app_affiliate` → Affiliate, 2026-08-24) |
+| `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb` | Working Colab (same code as v4) |
+| `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` | Previous freeze (winsor_esc + LS App, 2026-08-19) |
+| `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Generic Colab (no LS App) |
+| `notebooks/Marketing_Goals_Combined_RP_LS.ipynb` | Cursor / local twin of generic |
 
 YAML mirrors (not loaded at runtime — keep in sync by hand):
 
@@ -62,9 +65,9 @@ Pure **control panel** — no data pull. Defines:
 | Cost table | `analytics.realprize_cost_per_user` | `analytics.lonestar_cost_per_user` |
 | Deposits | `realprize.casino_astropay_dmn` | `lonestar.casino_astropay_dmn` |
 | Exclude affids | `4313` (TikTok) | `4866`, `7127` |
-| Curve populations | Web, App, Affiliate (+ Blended later) | Web, Affiliate (+ Blended) |
+| Curve populations | Web, App, Affiliate (+ Blended later) | Generic: Web, Affiliate (+ Blended). **v4 freeze:** also App |
 | Web winsor | **1%** | **0%** (off) |
-| App winsor | **0%** | n/a (not in pipeline) |
+| App winsor | **0%** | n/a in generic; **0%** locked in v4 freeze |
 | Affiliate winsor | **1%** | **1%** |
 | Blended winsor | **0%** | **0%** |
 | Organic-share trim | winsor **0%** | winsor **0%** |
@@ -72,9 +75,9 @@ Pure **control panel** — no data pull. Defines:
 | `cv_threshold` (flag after cleanup) | **0.15** | **0.175** |
 | `cv_good_enough` (stop removing dates) | **0.10** | **0.10** |
 | `max_remove_fraction` | **0.15** (~5 of 35 dates) | same |
-| `min_cohort_dates` | **1** | **20** |
-| `extrapolate_tail` | **False** | **True** (last ~30 day-steps) |
-| `has_scope_bucket` | **True** | **False** |
+| `min_cohort_dates` | **1** | **20** (v4 freeze: LS App **1**) |
+| `extrapolate_tail` | **False** | **True** (last ~30 day-steps); v3 LS App uses RP App growth after last measured day |
+| `has_scope_bucket` | **True** | **False** in generic Combined; **True** in v4 freeze |
 
 ---
 
@@ -103,13 +106,13 @@ Users SQL includes:
 
 | Column | How set |
 |--------|---------|
-| `population` | Web / App / Affiliate / Organic / PPC from affid |
-| `scope` | `app` if affid = 1, else `non_app` |
-| `bucket` | `organic` if (App + channel_type app_organic) or organic affids; else `acquired` |
+| `population` | Web / App / Affiliate / Organic / PPC from `marketing_population` (SEO + Shared Link + RP 2290 → Organic). **v4:** RP `channel_type = app_affiliate` → Affiliate |
+| `scope` | `app` if Goals App, else `non_app` (RP `app_affiliate` is `non_app`) |
+| `bucket` | `organic` if (App + channel_type app_organic) or Goals Organic; else `acquired` |
 
 Organic share is measured **within scope** (e.g. Web goals use **non_app** organic vs acquired dollars). App organic is separate from web organic.
 
-### LoneStar — `has_scope_bucket = False`
+### LoneStar — generic Combined `has_scope_bucket = False`
 
 Users SQL only has `population` + `cost_date` (no scope/bucket columns).
 
@@ -120,7 +123,9 @@ Helpers then set:
 | `scope` | always **`all`** |
 | `bucket` | `organic` if `population == ORGANIC_LABEL` (`'Organic'`), else `acquired` |
 
-So today Web and Affiliate **share the same organic share number** for LS (`scope=all`). Chart labels “non_app / app” match **RP** (or future LS App), not current LS Combined.
+So today Web and Affiliate **share the same organic share number** for generic LS Combined (`scope=all`). Chart labels “non_app / app” match **RP** and the **v4 freeze**, not generic LS Combined.
+
+**v4 freeze:** LS users SQL includes `scope` / `bucket` (App only if `marketing_population = 'APP'` and `cost_date >= 2026-08-05`). LS App organic is forced to 0. RP `app_affiliate` is Affiliate.
 
 Full flow: `PIPELINE_FLOW.md` Box 2 + organic boxes; Google Doc STEP 2 / 12.
 

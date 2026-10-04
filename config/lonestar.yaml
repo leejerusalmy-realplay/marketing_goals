@@ -16,13 +16,11 @@ populations_for_arpu_curves:
   - Affiliate
   # add App when LS App launches
 
-# affid → population (TikTok 4313 excluded entirely in queries)
-affid_map:
-  Web: [63, 4432, 4551, 4698, 5048, 5125, 7120, 7253, 7260, 8331, 8345]
-  # App: [1]  # uncomment when LS App launches
-  PPC: [64, 71]
-  Organic: [0, 78]
-  # else → Affiliate
+# Population from cost_per_user.marketing_population (notebook; YAML not runtime-loaded).
+# WEB→Web, Google/Bing/PPC→PPC, Organic→Organic, else Affiliate.
+# Exceptions: SEO + Shared Link → Organic.
+# v3 freeze: APP + cost_date >= 2026-08-05 → App; earlier APP → Affiliate.
+# This YAML still describes generic Combined (no LS App). TikTok 4866, 7127 excluded in queries.
 
 organic_label: Organic
 # No ORGANIC_SHARE_CAP_HORIZON in LS Combined predecessor
