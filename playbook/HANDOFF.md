@@ -28,8 +28,11 @@ Goal of this file: a new agent can pick up **without** re-deriving the pipeline 
 Continue marketing goals in lee_project/marketing_goals/.
 Read playbook/HANDOFF.md first (agent handoff).
 Pipeline is RP + LS: playbook/PIPELINE_FLOW.md + CONFIG_AND_KNOBS.md.
-Lee’s current Combined freeze is v4 (v3 + RP app_affiliate → Affiliate)
-(notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/), not generic Combined.
+Lee’s current Combined freeze is v5 (v4 mapping + staging deposit tables)
+(notebooks/versions/v5_2026-10_stg_deposits_marketing/), not generic Combined.
+Deposits: analytics.stg_realprize_casino_deposits_marketing and
+analytics.stg_lonestar_casino_deposits_marketing (USD, no /100).
+The 2026-10-02 export is still Astropay. Re-run before using v5 dollars.
 Don’t re-teach locked methodology. Don’t edit reference/.
 ```
 
@@ -107,7 +110,7 @@ Topic-specific agent work goes under `playbook/handoffs/` — not a second main 
 | **Dated locks** | `playbook/DECISIONS.md` |
 | **Excel SQL** | `playbook/sql_steps/` |
 | **Brand YAML** | `config/realprize.yaml`, `config/lonestar.yaml` |
-| **Run notebooks** | **Current freeze:** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` (working copy in `experiments/rp_app_affiliate_to_aff/`). Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` = no-App baseline |
+| **Run notebooks** | **Current freeze:** `notebooks/versions/v5_2026-10_stg_deposits_marketing/` (working copy in `experiments/rp_app_affiliate_to_aff/`). Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` = no-App baseline |
 | **Frozen predecessors** | `reference/Marketing_Goals_Combined_*.ipynb` |
 
 Shared flow chart:  
@@ -147,7 +150,8 @@ Shared flow chart:
 
 ## Rebuild: unified Colab (RP + LS)
 
-- **Current freeze (Lee, 2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
+- **Current freeze (Lee, 2026-10-07):** `notebooks/versions/v5_2026-10_stg_deposits_marketing/`
+- **Previous freeze (2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
 - **Working Colab:** `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb`
 - **Previous freeze (v3):** `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
 - **Generic baseline (no LS App):** `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` + local twin
@@ -159,6 +163,18 @@ Still open vs generic Combined: parity vs `reference/` spot-checks; Excel-lock 0
 ---
 
 ## Status / next steps (update when session ends)
+
+**As of 2026-10-07**
+
+- **Current Combined freeze is v5:** `notebooks/versions/v5_2026-10_stg_deposits_marketing/`
+  - Deposits: `analytics.stg_realprize_casino_deposits_marketing` and `analytics.stg_lonestar_casino_deposits_marketing`
+  - Columns: `user_id`, `deposit_date`, `deposit_amount` (already USD), `deposit_status = 'APPROVED'`
+  - User tables unchanged (`*_cost_per_user`)
+  - Mapping unchanged from v4 (RP `app_affiliate` → Affiliate; LS App floor `2026-08-05`)
+  - Working copy: `experiments/rp_app_affiliate_to_aff/`
+  - `AS_OF_DATE` in that notebook is pinned **2026-10-02**
+  - Export `runs/2026-10-02_rp_ls_rp_app_affiliate_to_aff_123941/` is still **Astropay**. Re-run Colab before treating goals as v5 dollars.
+  - v4 stays archived. Not copied into generic `notebooks/`.
 
 **As of 2026-08-24**
 
@@ -221,7 +237,7 @@ Still open vs generic Combined: parity vs `reference/` spot-checks; Excel-lock 0
 
 **Sensible next (priority order)**
 
-1. Treat v4 + `…112133` as the current Combined pack. Do not re-run the heavy Colab unless Lee asks.
+1. Treat v5 code as the current Combined pack. The `…123941` export is still Astropay. Re-run Colab only when Lee asks, then that export becomes the v5 numbers.
 2. App organic stays off until a mature App cohort exists.
 3. Python twin `build_winsor_esc_plus_ls_app.py` still lags the Colab floor — do not run it for this freeze.
 4. July `first_day` winsor_esc improvement and CV OOS stay parked. Do not copy into generic `notebooks/` until Lee asks.

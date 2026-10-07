@@ -23,10 +23,10 @@ How Cursor and Lee share one notebook loop (code → run → outputs → edits �
 
 | Role | File |
 |------|------|
-| **Current Combined freeze** | `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` |
-| Edit / run (v4 Colab) | `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb` |
+| **Current Combined freeze** | `notebooks/versions/v5_2026-10_stg_deposits_marketing/` |
+| Edit / run (v5 Colab) | `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb` |
 | Generic Combined (no LS App) | `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` / local twin |
-| Numbers | `runs/<as_of>_*` CSVs — current freeze export `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/` |
+| Numbers | `runs/<as_of>_*` CSVs — latest export `runs/2026-10-02_rp_ls_rp_app_affiliate_to_aff_123941/` is still Astropay |
 
 Set `RUN_BRANDS = ['realprize']` or `['lonestar']` for a single-brand debug run.
 

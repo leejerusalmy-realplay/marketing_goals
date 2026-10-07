@@ -6,7 +6,8 @@ brand: realprize
 
 tables:
   cost_per_user: analytics.realprize_cost_per_user
-  deposits: realprize.casino_astropay_dmn
+  deposits: analytics.stg_realprize_casino_deposits_marketing
+  # deposit_amount is already USD. Columns: user_id, deposit_date, deposit_status.
 
 # as_of_date: set per run (predecessor used "today − 2 days")
 # as_of_date: "YYYY-MM-DD"

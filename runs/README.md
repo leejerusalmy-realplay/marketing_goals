@@ -46,8 +46,10 @@ Prefer an `experiment_tag` in the folder name (not bare `_HHMMSS`) so Drive stay
 
 ## Which folder is "latest"?
 
-**Current Combined freeze export:** `2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`  
-(v4 — RP `app_affiliate` → Affiliate.)
+**Latest Combined export:** `2026-10-02_rp_ls_rp_app_affiliate_to_aff_123941/`  
+(as_of 2026-10-02, still Astropay. v5 code has not been re-run.)
+
+Previous v4 export: `2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`.
 
 Previous v3 pack: `2026-08-19_rp_ls_winsor_esc_ls_app_074309/` (later v3-mapping re-run: `…105632/`).  
 Old mixed LS App pack: `2026-08-03_rp_ls_winsor_esc_ls_app_110733/` — leftover `affid=1` in App.

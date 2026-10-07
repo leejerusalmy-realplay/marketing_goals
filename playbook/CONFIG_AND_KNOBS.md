@@ -6,7 +6,8 @@
 
 | Notebook | Role |
 |----------|------|
-| `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` | **Current Combined freeze** (v3 + RP `app_affiliate` → Affiliate, 2026-08-24) |
+| `notebooks/versions/v5_2026-10_stg_deposits_marketing/` | **Current Combined freeze** (v4 mapping + staging deposit tables, 2026-10-07) |
+| `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` | Previous freeze (v3 + RP `app_affiliate` → Affiliate, 2026-08-24). Deposits still Astropay. |
 | `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb` | Working Colab (same code as v4) |
 | `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` | Previous freeze (winsor_esc + LS App, 2026-08-19) |
 | `notebooks/Marketing_Goals_Combined_RP_LS_Colab.ipynb` | Generic Colab (no LS App) |
@@ -63,7 +64,7 @@ Pure **control panel** — no data pull. Defines:
 | Knob | RealPrize | LoneStar |
 |------|-----------|----------|
 | Cost table | `analytics.realprize_cost_per_user` | `analytics.lonestar_cost_per_user` |
-| Deposits | `realprize.casino_astropay_dmn` | `lonestar.casino_astropay_dmn` |
+| Deposits | `analytics.stg_realprize_casino_deposits_marketing` | `analytics.stg_lonestar_casino_deposits_marketing` |
 | Exclude affids | `4313` (TikTok) | `4866`, `7127` |
 | Curve populations | Web, App, Affiliate (+ Blended later) | Generic: Web, Affiliate (+ Blended). **v4 freeze:** also App |
 | Web winsor | **1%** | **0%** (off) |

@@ -6,7 +6,8 @@
 
 - Experiment home / working copy: `experiments/rp_app_affiliate_to_aff/`
 - Colab: `Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb`
-- **Current Combined freeze (v4, 2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
+- **Current Combined freeze (v5, 2026-10-07):** `notebooks/versions/v5_2026-10_stg_deposits_marketing/` (deposits from `analytics.stg_*_casino_deposits_marketing`; mapping unchanged)
+- **Previous freeze (v4, 2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
 - Topic handoff: `playbook/handoffs/RP_APP_AFFILIATE.md`
 - Matching export: `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`
 - Compare-to (last v3-mapping run): `runs/2026-08-19_rp_ls_winsor_esc_ls_app_105632/`

@@ -25,7 +25,7 @@ Status: coded in unified Combined notebooks; Excel-verify ongoing.
 
 | Area | RealPrize | LoneStar |
 |------|-----------|----------|
-| Tables | `analytics.realprize_cost_per_user`, `realprize.casino_astropay_dmn` | `analytics.lonestar_cost_per_user`, `lonestar.casino_astropay_dmn` |
+| Tables | `analytics.realprize_cost_per_user`, `analytics.stg_realprize_casino_deposits_marketing` | `analytics.lonestar_cost_per_user`, `analytics.stg_lonestar_casino_deposits_marketing` |
 | Drop affids | 4313 | 4866, 7127 |
 | Curve pops | Web, **App**, Affiliate + Blended | Generic: Web, Affiliate + Blended (**no App**). **v4 freeze:** also App |
 | Web winsor | **1%** | **0%** |
@@ -38,7 +38,7 @@ Status: coded in unified Combined notebooks; Excel-verify ongoing.
 | Population source | `cost_per_user.marketing_population` (SEO + Shared Link → Organic; RP `2290` → Organic). **v4:** RP `app_affiliate` → Affiliate | same; App = `APP` and `cost_date >= 2026-08-05` |
 
 Config lives in notebook `BRAND_CONFIGS` (+ `config/realprize.yaml` / `config/lonestar.yaml` mirrors).  
-**Current Combined freeze:** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` (not the generic `notebooks/` pair).
+**Current Combined freeze:** `notebooks/versions/v5_2026-10_stg_deposits_marketing/` (not the generic `notebooks/` pair).
 
 ---
 
@@ -75,9 +75,9 @@ Organic share = value at horizon **endpoint** (not per mid-horizon day).
 | Need | RealPrize | LoneStar |
 |------|-----------|----------|
 | Users / cost_date | `analytics.realprize_cost_per_user` | `analytics.lonestar_cost_per_user` |
-| Deposits | `realprize.casino_astropay_dmn` | `lonestar.casino_astropay_dmn` |
+| Deposits | `analytics.stg_realprize_casino_deposits_marketing` | `analytics.stg_lonestar_casino_deposits_marketing` |
 
-Shared rules: `Status = 'APPROVED'`, amount `/ 100`, `id > 0`, cost tables already drop test/marketing.
+Shared rules: `deposit_status = 'APPROVED'`, `deposit_amount` already USD (no `/ 100`), `id > 0`, cost tables already drop test/marketing.
 
 ---
 

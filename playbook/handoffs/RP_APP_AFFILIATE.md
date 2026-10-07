@@ -4,15 +4,15 @@
 
 **Read after** main `playbook/HANDOFF.md`.  
 **Opened:** 2026-08-23 — Combined experiment, RealPrize only.  
-**Last updated:** 2026-08-24 — **promoted to Combined freeze v4**.
+**Last updated:** 2026-10-07 — mapping still in Combined freeze **v5**. Deposit source moved; this carve-out did not.
 
 ---
 
 ## Paste into a new agent chat
 
 ```
-Continue marketing goals — current Combined freeze is v4
-(RP app_affiliate → Affiliate; LS mapping unchanged).
+Continue marketing goals — current Combined freeze is v5
+(v4 mapping, including RP app_affiliate → Affiliate; deposits from staging tables).
 Read playbook/HANDOFF.md first, then playbook/handoffs/RP_APP_AFFILIATE.md
 and experiments/rp_app_affiliate_to_aff/NOTES.md.
 Don’t re-teach the full pipeline. Don’t edit reference/.
@@ -27,7 +27,8 @@ Matching export: runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/
 
 | | |
 |--|--|
-| **Current freeze** | `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` |
+| **Current freeze** | `notebooks/versions/v5_2026-10_stg_deposits_marketing/` |
+| **v4 archive** | `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` |
 | **Working Colab** | `experiments/rp_app_affiliate_to_aff/Marketing_Goals_Combined_RP_LS_Colab_rp_app_affiliate_to_aff.ipynb` |
 | **Notes** | `experiments/rp_app_affiliate_to_aff/NOTES.md` |
 | **Excel SQL** | `experiments/rp_app_affiliate_to_aff/sql/01_rp_app_affiliate_move.sql` |

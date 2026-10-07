@@ -9,7 +9,7 @@
 - Combined Colab (working copy): `Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb`
 - Frozen archive (v3, 2026-08-19): `notebooks/versions/v3_2026-08_winsor_esc_ls_app/`
 - Matching v3 export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`
-- **Current Combined freeze is v4** (same LS App method + RP `app_affiliate` carve-out): `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
+- **Current Combined freeze is v5** (same LS App method + RP `app_affiliate` carve-out; deposits from staging tables): `notebooks/versions/v5_2026-10_stg_deposits_marketing/`
 - Python twin (do not run unprompted): `build_winsor_esc_plus_ls_app.py`
 - Method compare: `run_ls_app_bootstrap.py`
 - Topic handoff: `playbook/handoffs/LS_APP.md`

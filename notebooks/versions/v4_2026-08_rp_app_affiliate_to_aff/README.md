@@ -2,7 +2,7 @@
 
 # v4 — v3 + RP `app_affiliate` → Affiliate
 
-**Current Combined freeze** (2026-08-24). Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` stay the no-App baseline.
+**Previous Combined freeze** (2026-08-24). Superseded as current pack by **v5** (`v5_2026-10_stg_deposits_marketing/`) on 2026-10-07. Generic `notebooks/Marketing_Goals_Combined_RP_LS*.ipynb` stay the no-App baseline.
 
 | File | Purpose |
 |------|---------|

@@ -43,7 +43,7 @@ brand → population → cum/DSI → ARPU per patch → winsor → growth → CV
 | Setting | RealPrize | LoneStar |
 |---------|-----------|----------|
 | Cost table | `analytics.realprize_cost_per_user` | `analytics.lonestar_cost_per_user` |
-| Deposits | `realprize.casino_astropay_dmn` | `lonestar.casino_astropay_dmn` |
+| Deposits | `analytics.stg_realprize_casino_deposits_marketing` | `analytics.stg_lonestar_casino_deposits_marketing` |
 | Exclude affids | **4313** (TikTok) | **4866, 7127** |
 | Curve populations | Web, **App**, Affiliate + Blended | Generic Combined: Web, Affiliate + Blended. **Current v4 freeze:** also **App** (add-on) |
 | Web winsor | **1%** | **0%** (off) |
@@ -56,8 +56,8 @@ brand → population → cum/DSI → ARPU per patch → winsor → growth → CV
 | Tail extrapolate | **No** | **Yes** (~30 day-steps); v3 LS App uses RP App growth after last measured day |
 | Users SQL scope/bucket | **Yes** (app / non_app) | Generic Combined: **No** → organic `scope=all`. **v4 freeze:** yes (same idea as RP); LS App organic forced off |
 
-**Current Combined freeze (v4, 2026-08-24):** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`.  
-v3 engine + RP `app_affiliate` → Affiliate. LS App start `2026-08-05`; pre-floor `affid=1` → Affiliate; matching export `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`. Generic `notebooks/` Combined still has no LS App. Full detail: `CONFIG_AND_KNOBS.md` + `playbook/handoffs/RP_APP_AFFILIATE.md`.
+**Current Combined freeze (v5, 2026-10-07):** `notebooks/versions/v5_2026-10_stg_deposits_marketing/`.  
+v4 mapping + deposits from `analytics.stg_*_casino_deposits_marketing` (`deposit_amount` already USD). Latest numbers export `runs/2026-10-02_rp_ls_rp_app_affiliate_to_aff_123941/` is still Astropay — re-run before using v5 dollars. v4 archive: `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`. Generic `notebooks/` Combined still has no LS App. Full detail: `CONFIG_AND_KNOBS.md` + `playbook/handoffs/RP_APP_AFFILIATE.md`.
 
 ---
 
@@ -143,7 +143,7 @@ When App is live (RP-style):
 
 ### What happens
 
-1. Pull approved deposits; convert cents → dollars (`/ 100`).
+1. Pull approved deposits. v5 source `deposit_amount` is already dollars (no `/ 100`).
 2. Join deposit `playerid` → user `id`.
 3. Compute  
    `dsi = deposit_date − cost_date` (calendar days).

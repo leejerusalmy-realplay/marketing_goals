@@ -4,7 +4,7 @@
 
 **Read after** main `playbook/HANDOFF.md`.  
 **Opened:** 2026-08-18 — LS App launched 2026-07-16; not enough native history for a normal Combined lock.  
-**Last updated:** 2026-08-24 — Combined current freeze is **v4** (LS App method unchanged from v3). App start 2026-08-05; App `min_cohort_dates = 1` (temporary). Provisional vs generic Combined.
+**Last updated:** 2026-10-07 — Combined current freeze is **v5** (LS App method unchanged; deposits now staging tables). App start 2026-08-05; App `min_cohort_dates = 1` (temporary). Provisional vs generic Combined.
 
 ---
 
@@ -16,9 +16,9 @@ Read playbook/HANDOFF.md first, then playbook/handoffs/LS_APP.md
 and experiments/ls_app_bootstrap/NOTES.md.
 Don’t re-teach the full pipeline. Don’t edit reference/.
 Don’t copy into generic notebooks/ until Lee asks.
-Lee’s current Combined freeze is v4 (includes this LS App method).
+Lee’s current Combined freeze is v5 (includes this LS App method; deposits from staging tables).
 LS App method is unchanged from v3. Current pack:
-notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/
+notebooks/versions/v5_2026-10_stg_deposits_marketing/
 Matching export: runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/
 v3 archive: notebooks/versions/v3_2026-08_winsor_esc_ls_app/
 v3 export: runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/
@@ -33,7 +33,7 @@ v3 export: runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/
 | **Experiment home** | `experiments/ls_app_bootstrap/` |
 | **How to calculate (write-up)** | `experiments/ls_app_bootstrap/NOTES.md` |
 | **Colab to open** | `experiments/ls_app_bootstrap/Marketing_Goals_Combined_RP_LS_Colab_v2_winsor_esc_ls_app.ipynb` |
-| **Current Combined freeze** | `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/` (LS App method unchanged) |
+| **Current Combined freeze** | `notebooks/versions/v5_2026-10_stg_deposits_marketing/` (LS App method unchanged; deposits from staging tables) |
 | **v3 archive** | `notebooks/versions/v3_2026-08_winsor_esc_ls_app/` (replaced 2026-08-19) |
 | **Python twin (do not run unprompted)** | `experiments/ls_app_bootstrap/build_winsor_esc_plus_ls_app.py` — lags the Colab floor |
 | **Method compare** | `experiments/ls_app_bootstrap/run_ls_app_bootstrap.py` |

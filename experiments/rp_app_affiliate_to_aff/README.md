@@ -2,11 +2,12 @@
 
 # RP `app_affiliate` → Affiliate
 
-Working copy for Combined freeze **v4**.
+Working copy for Combined freeze **v5** (deposit source). The `app_affiliate` rule is unchanged from v4.
 
 **How it works:** `NOTES.md`  
 **New-chat handoff:** `playbook/handoffs/RP_APP_AFFILIATE.md`  
-**Frozen archive:** `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
+**Frozen archive:** `notebooks/versions/v5_2026-10_stg_deposits_marketing/`  
+Previous freeze: `notebooks/versions/v4_2026-08_rp_app_affiliate_to_aff/`
 
 ## Colab (open this)
 

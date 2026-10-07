@@ -4,6 +4,16 @@ Dated locks for this project. Newest first. Every lock notes which brand(s) it a
 
 *(Full pipeline Excel-lock still partial. Knobs mirror `config/realprize.yaml` + `config/lonestar.yaml` + notebook `BRAND_CONFIGS`.)*
 
+## 2026-10-07 — Current Combined freeze is v5 (staging marketing deposits)
+
+- **Brands:** RP + LS.
+- **Decision:** Deposit source moves off Astropay. RealPrize reads `analytics.stg_realprize_casino_deposits_marketing`. LoneStar reads `analytics.stg_lonestar_casino_deposits_marketing`.
+- **Columns:** `user_id` → player id, `deposit_date`, `SUM(deposit_amount)` with no `/ 100` (already USD), `deposit_status = 'APPROVED'`.
+- **Unchanged:** `*_cost_per_user`, population mapping (including RP `app_affiliate` → Affiliate and the LS App floor `2026-08-05`), winsor, CV, organic, curve.
+- **Freeze:** `notebooks/versions/v5_2026-10_stg_deposits_marketing/`. Working copy: `experiments/rp_app_affiliate_to_aff/`.
+- **Not yet re-run:** `runs/2026-10-02_rp_ls_rp_app_affiliate_to_aff_123941/` is still the Astropay export at as_of 2026-10-02. v4 stays archived.
+- Excel-check SQL under `playbook/sql_steps/` still points at Astropay.
+
 ## 2026-08-24 — Looker Goals view uses Combined v4 mapping; day cap 120
 
 - **Brands:** RP + LS.

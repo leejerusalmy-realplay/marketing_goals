@@ -24,7 +24,8 @@ Open in Colab → Runtime → Run all. Python twin `build_winsor_esc_plus_ls_app
 - LS App organic **off** (`organic_share = 0`).
 
 v3 Combined export: `runs/2026-08-19_rp_ls_winsor_esc_ls_app_074309/`  
-Current Combined freeze is **v4** (same LS App method): `runs/2026-08-19_rp_ls_rp_app_affiliate_to_aff_112133/`  
+Current Combined freeze is **v5** (same LS App method; deposits from staging tables): `notebooks/versions/v5_2026-10_stg_deposits_marketing/`  
+Latest numbers export is still Astropay: `runs/2026-10-02_rp_ls_rp_app_affiliate_to_aff_123941/`  
 (old mixed leftover pack: `runs/2026-08-03_rp_ls_winsor_esc_ls_app_110733/`)
 
 ## Method compare

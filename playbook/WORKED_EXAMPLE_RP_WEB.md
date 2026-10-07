@@ -50,7 +50,7 @@
 
 ## 1. Who enters the data pull (filters)
 
-From `analytics.realprize_cost_per_user` + `realprize.casino_astropay_dmn`:
+From `analytics.realprize_cost_per_user` + `analytics.stg_realprize_casino_deposits_marketing`:
 
 | Filter | Rule | Why |
 |--------|------|-----|
@@ -58,7 +58,7 @@ From `analytics.realprize_cost_per_user` + `realprize.casino_astropay_dmn`:
 | Not TikTok | `affid != 4313` | Excluded population |
 | Already in cost table | test_account = 0, marketing_account = 0 | Built into that table |
 | Date floor | `cost_date ≥ as_of − 405 days` | Need history for long patches |
-| Deposits | `Status = 'APPROVED'`, amount `/100` = USD | Revenue definition |
+| Deposits | `deposit_status = 'APPROVED'`, `deposit_amount` already USD | Revenue definition |
 | dsi | deposit on/after cost_date only (`dsi ≥ 0`) | No pre-cost deposits in ARPU |
 
 **Web:** `marketing_population = 'WEB'` on `realprize_cost_per_user`, TikTok affid `4313` excluded.
